@@ -1,28 +1,27 @@
-.layoutContainer { 
-  min-height: 100vh; 
-  display: flex; 
-  flex-direction: column; 
+.layoutContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.workspace { 
-  display: flex; 
-  flex: 1; 
+.workspace {
+  display: flex;
+  flex: 1;
 }
 
-.mainGrid { 
-  flex: 1; 
-  padding: 24px; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 24px; 
+.mainGrid {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.topSection { 
-  display: grid; 
-  grid-template-columns: 360px 1fr; 
-  gap: 24px; 
+.topSection {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
 }
-
-.bottomSection { 
-  width: 100%; 
+.bottomSection {
+  width: 100%;
 }

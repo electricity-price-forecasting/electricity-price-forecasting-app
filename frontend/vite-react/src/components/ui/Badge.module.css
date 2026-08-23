@@ -6,10 +6,12 @@
 }
 .green { 
   color: var(--status-green); 
+  background: #f0fdf4;
 }
 
 .red { 
   color: var(--status-red); 
+  background: #fef2f2;
 }
 
 .neutral { 

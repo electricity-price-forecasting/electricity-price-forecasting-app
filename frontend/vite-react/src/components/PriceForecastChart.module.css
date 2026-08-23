@@ -10,10 +10,40 @@
   margin-bottom: 16px; 
 }
 
+.titleGroup { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
+}
+
 .title { 
   margin: 0; 
   font-size: 1rem; 
   color: var(--text-main); 
+}
+
+.periodTabs { 
+  display: flex; 
+  background: var(--bg-canvas); 
+  border-radius: 6px; 
+  padding: 2px; 
+}
+
+.tabBtn { 
+  border: none; 
+  background: none; 
+  font-size: 0.725rem; 
+  font-weight: 600; 
+  color: var(--text-muted); 
+  padding: 4px 8px; 
+  border-radius: 4px;
+  cursor: pointer; 
+}
+
+.activeTab { 
+  background: var(--bg-card); 
+  color: var(--primary-blue); 
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
 }
 
 .select { 
@@ -60,6 +90,35 @@
   height: 8px; 
   background: var(--primary-blue-light); 
   border: 1px solid #dbeafe; 
+}
+
+.summariesGrid { 
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 12px; 
+  margin-top: 16px; 
+  border-top: 1px solid var(--border-color); 
+  padding-top: 16px; 
+}
+
+.summaryCard { 
+  background: var(--bg-subcard); 
+  padding: 10px; 
+  border-radius: 8px; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 4px; 
+}
+
+.summaryLabel { 
+  font-size: 0.7rem; 
+  color: var(--text-muted); 
+}
+
+.summaryRange { 
+  font-size: 0.85rem; 
+  color: var(--text-main); 
 }
 
 .footer { 

@@ -1,22 +1,44 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Card } from './ui/Card';
-import { MOCK_CHART_DATA } from '../constants/dashboardData';
+import { Badge } from './ui/Badge';
 import styles from './PriceForecastChart.module.css';
 
-export const PriceForecastChart = ({ data = MOCK_CHART_DATA }) => {
+export const PriceForecastChart = ({ 
+  chartData, 
+  activePeriod = '24H', 
+  onPeriodChange,
+  periodSummaries = [] 
+}) => {
+  const periods = ['24H', '7D', '30D', '12M'];
+
   return (
     <Card className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>Price Forecast ⓘ</h3>
+        <div className={styles.titleGroup}>
+          <h3 className={styles.title}>Price Forecast ⓘ</h3>
+          <div className={styles.periodTabs}>
+            {periods.map((p) => (
+              <button
+                key={p}
+                className={`${styles.tabBtn} ${activePeriod === p ? styles.activeTab : ''}`}
+                onClick={() => onPeriodChange && onPeriodChange(p)}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
         <select className={styles.select}>
           <option>Each 15 min</option>
+          <option>Hourly</option>
+          <option>Daily</option>
         </select>
       </div>
 
       <div className={styles.chartWrapper}>
         <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="actualFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#2563eb" stopOpacity={0.25} />
@@ -39,6 +61,18 @@ export const PriceForecastChart = ({ data = MOCK_CHART_DATA }) => {
           <span><span className={styles.rangeBox}></span> Prices range</span>
         </div>
       </div>
+
+      {periodSummaries.length > 0 && (
+        <div className={styles.summariesGrid}>
+          {periodSummaries.map((item, idx) => (
+            <div key={idx} className={styles.summaryCard}>
+              <span className={styles.summaryLabel}>{item.label}</span>
+              <strong className={styles.summaryRange}>{item.range}</strong>
+              <Badge type={item.type}>{item.confidence}</Badge>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className={styles.footer}>
         <span>Forecast generated today, 10:15 AM</span>
