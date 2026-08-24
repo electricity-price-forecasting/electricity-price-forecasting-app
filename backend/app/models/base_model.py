@@ -87,3 +87,15 @@ class BaseModel:
             raise FileNotFoundError(f"Model artifact not found at {input_path}")
         with open(input_path, "rb") as file:
             return pickle.load(file)
+
+    def make_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Contract for generating model-specific features from historical data.
+        Concrete models (like LoadModel) MUST implement their own version of this method.
+        """
+        raise NotImplementedError("Subclasses must implement make_features()")
+
+    def predict_next(self, df: pd.DataFrame) -> float:
+        features_df = self.make_features(df)
+        predictions = self.predict(features_df)
+        return float(predictions[-1])
