@@ -1,132 +1,52 @@
-.container { 
-  display: flex; 
-  flex-direction: column; 
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
 }
 
-.header { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  margin-bottom: 16px; 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-.titleGroup { 
-  display: flex; 
-  align-items: center; 
-  gap: 16px; 
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
-.title { 
-  margin: 0; 
-  font-size: 1rem; 
-  color: var(--text-main); 
+.periodControls {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-canvas);
+  padding: 4px;
+  border-radius: 6px;
 }
 
-.periodTabs { 
-  display: flex; 
-  background: var(--bg-canvas); 
-  border-radius: 6px; 
-  padding: 2px; 
-}
-
-.tabBtn { 
-  border: none; 
-  background: none; 
-  font-size: 0.725rem; 
-  font-weight: 600; 
-  color: var(--text-muted); 
-  padding: 4px 8px; 
+.tabBtn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 4px 10px;
   border-radius: 4px;
-  cursor: pointer; 
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.activeTab { 
-  background: var(--bg-card); 
-  color: var(--primary-blue); 
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+.activeTab {
+  background: var(--bg-card);
+  color: var(--primary-blue);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.select { 
-  border: 1px solid var(--border-color); 
-  border-radius: 6px; 
-  padding: 4px 8px; 
-  font-size: 0.75rem; 
-  color: var(--text-main); 
-}
-
-.chartWrapper { 
-  position: relative; 
-}
-
-.legend { 
-  display: flex; 
-  justify-content: center; 
-  gap: 16px; 
-  font-size: 0.725rem; 
-  color: var(--text-muted); 
-  margin-top: 12px; 
-}
-
-.legend span { 
-  display: flex; 
-  align-items: center; 
-  gap: 6px; 
-}
-
-.actualLine { 
-  width: 12px; 
-  height: 3px; 
-  background: var(--primary-blue); 
-}
-
-.forecastLine { 
-  width: 12px; 
-  height: 2px; 
-  border-top: 2px dashed #60a5fa; 
-}
-
-.rangeBox { 
-  width: 12px; 
-  height: 8px; 
-  background: var(--primary-blue-light); 
-  border: 1px solid #dbeafe; 
-}
-
-.summariesGrid { 
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 12px; 
-  margin-top: 16px; 
-  border-top: 1px solid var(--border-color); 
-  padding-top: 16px; 
-}
-
-.summaryCard { 
-  background: var(--bg-subcard); 
-  padding: 10px; 
-  border-radius: 8px; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  gap: 4px; 
-}
-
-.summaryLabel { 
-  font-size: 0.7rem; 
-  color: var(--text-muted); 
-}
-
-.summaryRange { 
-  font-size: 0.85rem; 
-  color: var(--text-main); 
-}
-
-.footer { 
-  display: flex; 
-  justify-content: space-between; 
-  font-size: 0.675rem; 
-  color: var(--text-muted); 
-  border-top: 1px solid var(--border-color); 
-  padding-top: 10px; 
-  margin-top: 12px; 
+.footer {
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
 }

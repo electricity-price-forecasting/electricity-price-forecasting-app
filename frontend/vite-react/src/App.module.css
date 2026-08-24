@@ -25,3 +25,19 @@
 .bottomSection {
   width: 100%;
 }
+
+.container {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.layout {
+  padding: 24px;
+  min-height: 100vh;
+}
