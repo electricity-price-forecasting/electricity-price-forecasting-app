@@ -1,0 +1,9 @@
+pyarrow
+pandas
+lightgbm
+joblib
+pydantic
+pydantic-settings
+astral
+pytest
+pytest-cov
