@@ -10,26 +10,23 @@ class Settings(BaseSettings):
     country: str = Field(default="PL", validation_alias="COUNTRY")
 
     PROJECT_NAME: str = "Electricity Price Forecasting"
-    BASE_DIR: ClassVar[Path] = Path(__file__).resolve().parents[1]
+    BASE_DIR: ClassVar[Path] = Path(__file__).resolve().parents[2]
 
-    data_dir = BASE_DIR / "data"
-    processed_dir = data_dir / "processed"
+    data_dir: Path = BASE_DIR / "data"
+    processed_dir: Path = data_dir / "processed"
     raw_file: Path = data_dir / "raw" / "historical_dataset.csv"
     cache_dir: Path = data_dir / "cache"
     model_dir: Path = data_dir / "model"
 
-    load_processed_file = processed_dir / "load.csv"
-    wind_processed_file = processed_dir / "wind.csv"
-    solar_processed_file = processed_dir / "solar.csv"
-    price_processed_file = processed_dir / "price.csv"
+    processed_file: Path = processed_dir / "processed_historical_dataset.csv"
 
-    load_model_pkl = model_dir / "load.pkl"
-    wind_model_pkl = model_dir / "wind.pkl"
-    solar_model_pkl = model_dir / "solar.pkl"
-    price_model_pkl = model_dir / "price.pkl"
+    load_model_pkl: Path = model_dir / "load.pkl"
+    wind_model_pkl: Path = model_dir / "wind.pkl"
+    solar_model_pkl: Path = model_dir / "solar.pkl"
+    price_model_pkl: Path = model_dir / "price.pkl"
 
-    LATITUDE: ClassVar[float] = 52.1
-    LONGITUDE: ClassVar[float] = 19.5
+    LATITUDE: float = Field(default=52.1, validation_alias="LATITUDE")
+    LONGITUDE: float = Field(default=21.0, validation_alias="LONGITUDE")
 
     @property
     def database_url(self) -> str:
