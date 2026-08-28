@@ -38,6 +38,12 @@ class LoadModel(BaseModel):
         })[self.FEATURES]
 
     def predict_next(self, df: pd.DataFrame) -> float:
+        """
+        Implements the Load forecasting API for the next timestep.
+        """
+
         X = self.make_features(df)
+
         prediction = self.predict(X)
+
         return float(prediction[0])

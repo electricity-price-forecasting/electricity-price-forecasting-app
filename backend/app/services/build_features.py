@@ -1,5 +1,5 @@
-from config.settings import settings
-from features.features_builder import FeatureBuilder
+from app.src.config.settings import settings
+from app.src.features.features_builder import FeatureBuilder
 
 
 def main() -> None:

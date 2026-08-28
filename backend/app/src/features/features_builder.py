@@ -1,4 +1,4 @@
-from features.features_builder import FeatureBuilder
+from app.src.features.features_builder import FeatureBuilder
 
 
 
