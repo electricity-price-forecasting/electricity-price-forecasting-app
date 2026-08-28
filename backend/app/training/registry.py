@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from app.src.config.settings import settings
+from config.settings import settings
 from app.src.model.base import BaseModel
 from app.src.model.load import LoadModel
 from app.src.model.price import PriceModel

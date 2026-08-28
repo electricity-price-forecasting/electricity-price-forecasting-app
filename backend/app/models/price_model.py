@@ -52,3 +52,7 @@ class PriceModel(BaseModel):
             }
         )[self.FEATURES]
 
+    def predict_next(self, df: pd.DataFrame, generation: GenerationModel) -> float:
+        X = self.make_features(df, generation)
+        prediction = self.predict(X)
+        return float(prediction[0])

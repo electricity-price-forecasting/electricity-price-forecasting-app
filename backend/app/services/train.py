@@ -1,5 +1,4 @@
-from app.src.config import settings
-from app.src.training.trainer import ModelTrainer
+from training.trainer import ModelTrainer
 
 
 def main():

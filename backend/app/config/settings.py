@@ -8,6 +8,7 @@ from pathlib import Path
 class Settings(BaseSettings):
     entsoe_api_key: str = Field(validation_alias="ENTSOE_API_KEY")
     country: str = Field(default="PL", validation_alias="COUNTRY")
+    timezone: str = Field(default="Europe/Warsaw", validation_alias="TIMEZONE")
 
     PROJECT_NAME: str = "Electricity Price Forecasting"
     BASE_DIR: ClassVar[Path] = Path(__file__).resolve().parents[2]
@@ -28,12 +29,11 @@ class Settings(BaseSettings):
     LATITUDE: float = Field(default=52.1, validation_alias="LATITUDE")
     LONGITUDE: float = Field(default=21.0, validation_alias="LONGITUDE")
 
-    @property
-    def database_url(self) -> str:
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-
+    # @property
+    # def database_url(self) -> str:
+    #     return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(Path(__file__).resolve().parents[2] / ".env"),
         env_file_encoding="utf-8",
         case_sensitive=True,
     )

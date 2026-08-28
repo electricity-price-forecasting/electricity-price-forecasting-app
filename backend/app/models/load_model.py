@@ -20,6 +20,8 @@ class LoadModel(BaseModel):
         ))
 
     def make_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        if len(df) < 672:
+            raise ValueError(f"Insufficient history. Required: 672, got: {len(df)}")
 
         next_ts = next_timestamp(df)
 
@@ -34,3 +36,8 @@ class LoadModel(BaseModel):
             "load_lag_96": [df["load"].iloc[-96]],
             "load_lag_672": [df["load"].iloc[-672]],
         })[self.FEATURES]
+
+    def predict_next(self, df: pd.DataFrame) -> float:
+        X = self.make_features(df)
+        prediction = self.predict(X)
+        return float(prediction[0])

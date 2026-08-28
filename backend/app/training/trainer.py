@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 
-from app.src.training.registry import MODEL_REGISTRY
+from training.registry import MODEL_REGISTRY
 from app.models.features import MODEL_FEATURES
 
 logger = logging.getLogger(__name__)
