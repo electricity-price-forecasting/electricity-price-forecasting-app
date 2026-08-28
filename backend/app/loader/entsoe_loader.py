@@ -11,6 +11,20 @@ class EntsoeLoader:
         self.client = EntsoePandasClient(api_key=settings.entsoe_api_key)
         self.country = country
 
+    def build_dataset(self, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+        """
+        Fetches prices, load, and renewable generation data and combines them.
+        Keeps only the timestamps that exist in all datasets.
+        """
+        prices = self.get_prices(start, end)
+        load = self.get_load(start, end)
+        renewable = self.get_wind_solar(start, end)
+
+        # Concatenate column-wise and use an inner join to drop missing timestamps
+        dataset = pd.concat([prices, load, renewable], axis=1, join="inner")
+
+        return dataset
+
     @staticmethod
     def _prepare_dataframe(df: pd.DataFrame | pd.Series) -> pd.DataFrame:
         if isinstance(df, pd.Series):
