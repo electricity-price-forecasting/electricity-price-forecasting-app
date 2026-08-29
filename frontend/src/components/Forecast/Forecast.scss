@@ -1,6 +1,22 @@
-@use "../../utils/variables";
+@use "../../utils/variables" as *;
 
 .forecast {
-  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $chartsBorderColor;
+  border-radius: $borderRadius;
   grid-area: forecast;
+
+  padding: 24px;
+
+  &__titleBox {
+    border: 1px solid black;
+
+    &__title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 140%;
+    }
+  }
 }

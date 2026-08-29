@@ -157,26 +157,23 @@ export const Sidebar = () => {
           </a>
         </div>
 
-        <div className="sidebar__buttonsContainer__settingsButtonBox">
+        <a href="" className="sidebar__buttonsContainer__settingsButtonBox">
           <div className="sidebar__buttonsContainer__settingsButtonBox__mainBox">
-            <a
-              href=""
-              className="sidebar__buttonsContainer__settingsButtonBox__mainBox__button"
-            >
+            <div className="sidebar__buttonsContainer__settingsButtonBox__mainBox__button">
               <img
                 className="sidebar__buttonsContainer__settingsButtonBox__mainBox__button__icon"
                 src={settingsIcon}
                 alt=""
               />
               Settings
-            </a>
+            </div>
           </div>
           <img
             className="sidebar__buttonsContainer__settingsButtonBox__arrow"
             src={arrowRightIcon}
             alt=""
           />
-        </div>
+        </a>
       </div>
     </div>
   );
