@@ -1,12 +1,14 @@
 @use "./utils/variables" as *;
 @use "./utils/fonts";
 
-* {
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
+  margin: 0;
   font-family: "Graphik Trial", sans-serif;
   background-color: $mainBackgroundColor;
 }
@@ -18,99 +20,25 @@ textarea {
   font: inherit;
 }
 
-.header {
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 24px 0 24px;
-  width: 100vw;
-  height: 56px;
-  border: 1px solid $mainBorderColor;
-  background-color: $secondaryBackgroundColor;
-
-  &__logo {
+.app {
+  &__body {
     display: flex;
-    align-items: center;
-    height: 100%;
-    width: 244px;
-    border-right: 1px solid $mainBorderColor;
-    background-color: inherit;
+    min-height: calc(100vh - #{$headerHeight});
 
-    &__img {
-      height: 28px;
-      width: 68px;
-    }
-  }
+    &__content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "highlights drivers"
+        "forecast forecast";
+      grid-template-rows: 410px minmax(500px, 1fr);
+      gap: 16px;
 
-  &__buttonBox {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    height: 100%;
-    width: 348px;
-    gap: 4px;
-
-    &__search {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      border: 1px solid $mainBorderColor;
-      border-radius: 4px;
+      flex: 1;
+      min-width: 0;
+      padding: 24px;
 
       background-color: $mainBackgroundColor;
-
-      height: 32px;
-      width: 108px;
-      padding: 0 12px;
-      margin-right: 24px;
-      box-sizing: border-box;
-
-      &__icon {
-        height: 14px;
-        width: 14px;
-      }
-
-      &__searchField {
-        border: none;
-        outline: none;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 140%;
-        background: transparent;
-
-        &:focus,
-        &:focus-visible {
-          outline: none;
-          box-shadow: none;
-        }
-
-        &::placeholder {
-          color: $subtitleColor;
-        }
-      }
-    }
-
-    &__button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      height: 32px;
-      width: 32px;
-      background-color: $mainBorderColor;
-      border-radius: 4px;
-
-      box-sizing: border-box;
-
-      &__img {
-        background-color: transparent;
-        height: 16px;
-        width: 16px;
-      }
     }
   }
 }
