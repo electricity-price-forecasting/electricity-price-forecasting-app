@@ -3,7 +3,7 @@
 .drivers {
   display: flex;
   flex-direction: column;
-  border: 1px solid $chartsBorderColor;
+  border: 1px solid $mainBorderColor;
   border-radius: $borderRadius;
   grid-area: drivers;
 

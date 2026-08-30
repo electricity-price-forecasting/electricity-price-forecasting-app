@@ -29,14 +29,22 @@ export const Header = () => {
           />
         </div>
 
-        <a href="" className="header__buttonBox__button">
+        <a
+          onClick={(e) => e.preventDefault()}
+          href=""
+          className="header__buttonBox__button"
+        >
           <img
             src={fileIcon}
             alt=""
             className="header__buttonBox__button__img"
           />
         </a>
-        <a href="" className="header__buttonBox__button">
+        <a
+          onClick={(e) => e.preventDefault()}
+          href=""
+          className="header__buttonBox__button"
+        >
           <img
             src={headphonesIcon}
             alt=""
