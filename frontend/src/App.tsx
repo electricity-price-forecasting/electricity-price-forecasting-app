@@ -3,7 +3,7 @@ import { Drivers } from "./components/Drivers";
 import { Forecast } from "./components/Forecast";
 import { Header } from "./components/Header";
 import { Highlights } from "./components/Highlights";
-import { Sidebar } from "./components/Sidebar";
+// import { Sidebar } from "./components/Sidebar";
 
 export const App = () => {
   return (
@@ -12,7 +12,7 @@ export const App = () => {
         <Header />
 
         <div className="app__body">
-          <Sidebar />
+          {/*<Sidebar />*/}
 
           <main className="app__body__content">
             <Highlights />

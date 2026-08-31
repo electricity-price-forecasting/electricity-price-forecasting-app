@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { PricePoint } from "../../types/types";
 import { CustomTooltip } from "./CustomTooltip";
 import "./Forecast.scss";
@@ -117,8 +118,19 @@ const pricePoints: PricePoint[] = [
 const data = pricePoints.map((point, slot) => ({ ...point, slot }));
 
 export const Forecast = () => {
+  const [selectedSlot, setSelectedSlot] = useState<string | number>();
   const selectedPrice = 90;
-  const selectedSlot = data.findIndex((point) => point.time === "10:00");
+
+  // const selectedSlot = data.findIndex((point) => point.time === "10:00");
+
+  /*  function getDate() {
+    const date = new Date();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    return `${hour - 12}:${minute}`;
+  }
+*/
 
   return (
     <section className="price-forecast">
@@ -145,7 +157,7 @@ export const Forecast = () => {
             </button>
           </div>
 
-          <select className="price-forecast__interval" defaultValue="15">
+          <select className="price-forecast__interval" defaultValue="60">
             <option value="15">15 min</option>
             <option value="30">30 min</option>
             <option value="60">hourly</option>
@@ -159,6 +171,7 @@ export const Forecast = () => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
+            onClick={(e) => setSelectedSlot(e.activeLabel ?? undefined)}
             margin={{
               top: 20,
               right: 10,
