@@ -16,121 +16,121 @@ import {
 } from "recharts";
 
 const pricePoints: PricePoint[] = [
-  { time: "23:00", actual: 56 },
-  { time: "00:00", actual: 59 },
-  { time: "01:00", actual: 62 },
-  { time: "02:00", actual: 63 },
-  { time: "03:00", actual: 65 },
-  { time: "04:00", actual: 75 },
-  { time: "05:00", actual: 64 },
-  { time: "06:00", actual: 42 },
-  { time: "07:00", actual: 54 },
-  { time: "08:00", actual: 72 },
-  { time: "09:00", actual: 84 },
-  { time: "10:00", actual: 90, forecast: 90 },
+  { time: "00:00", actual: 56 },
+  { time: "01:00", actual: 59 },
+  { time: "02:00", actual: 62 },
+  { time: "03:00", actual: 63 },
+  { time: "04:00", actual: 65 },
+  { time: "05:00", actual: 75 },
+  { time: "06:00", actual: 64 },
+  { time: "07:00", actual: 42 },
+  { time: "08:00", actual: 54 },
+  { time: "09:00", actual: 72 },
+  { time: "10:00", actual: 84 },
+  { time: "11:00", actual: 90, forecast: 90 },
 
   {
-    time: "11:00",
+    time: "12:00",
     forecast: 94,
     rangeBase: 84,
     rangeDiff: 20,
   },
   {
-    time: "12:00",
+    time: "13:00",
     forecast: 109,
     rangeBase: 88,
     rangeDiff: 28,
   },
   {
-    time: "13:00",
+    time: "14:00",
     forecast: 112,
     rangeBase: 90,
     rangeDiff: 26,
   },
   {
-    time: "14:00",
+    time: "15:00",
     forecast: 101,
     rangeBase: 88,
     rangeDiff: 27,
   },
   {
-    time: "15:00",
+    time: "16:00",
     forecast: 115,
     rangeBase: 92,
     rangeDiff: 31,
   },
   {
-    time: "16:00",
+    time: "17:00",
     forecast: 124,
     rangeBase: 96,
     rangeDiff: 34,
   },
   {
-    time: "17:00",
+    time: "18:00",
     forecast: 131,
     rangeBase: 99,
     rangeDiff: 34,
   },
   {
-    time: "18:00",
+    time: "19:00",
     forecast: 120,
     rangeBase: 92,
     rangeDiff: 30,
   },
   {
-    time: "19:00",
+    time: "20:00",
     forecast: 116,
     rangeBase: 88,
     rangeDiff: 27,
   },
   {
-    time: "20:00",
+    time: "21:00",
     forecast: 108,
     rangeBase: 84,
     rangeDiff: 27,
   },
   {
-    time: "21:00",
+    time: "22:00",
     forecast: 104,
     rangeBase: 82,
     rangeDiff: 24,
   },
   {
-    time: "22:00",
+    time: "23:00",
     forecast: 100,
     rangeBase: 80,
     rangeDiff: 23,
   },
   {
-    time: "23:00",
+    time: "00:00",
     forecast: 95,
     rangeBase: 78,
     rangeDiff: 22,
   },
-  {
-    time: "00:00 ",
-    forecast: 80,
-    rangeBase: 71,
-    rangeDiff: 23,
-  },
 ];
+
+type ChartPoint = PricePoint & {
+  slot: number;
+};
 
 const data = pricePoints.map((point, slot) => ({ ...point, slot }));
 
 export const Forecast = () => {
-  const [selectedSlot, setSelectedSlot] = useState<string | number>();
-  const selectedPrice = 90;
+  const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
-  // const selectedSlot = data.findIndex((point) => point.time === "10:00");
+  const handleChartClick = (event: { activeLabel?: string | number }) => {
+    const slot = Number(event.activeLabel);
 
-  /*  function getDate() {
-    const date = new Date();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
+    if (!Number.isInteger(slot)) {
+      return;
+    }
 
-    return `${hour - 12}:${minute}`;
-  }
-*/
+    const point = data[slot];
+
+    if (point) {
+      setSelectedPoint(point);
+    }
+  };
 
   return (
     <section className="price-forecast">
@@ -171,10 +171,11 @@ export const Forecast = () => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
-            onClick={(e) => setSelectedSlot(e.activeLabel ?? undefined)}
+            accessibilityLayer={false}
+            onMouseMove={handleChartClick}
             margin={{
               top: 20,
-              right: 10,
+              right: 18,
               left: -12,
               bottom: 5,
             }}
@@ -229,13 +230,13 @@ export const Forecast = () => {
             />
 
             <ReferenceLine
-              y={selectedPrice}
+              y={selectedPoint?.actual ?? selectedPoint?.forecast}
               stroke="#9d9da7"
-              strokeDasharray="7 7"
+              strokeDasharray="6 6"
             />
 
             <ReferenceLine
-              x={selectedSlot}
+              x={selectedPoint?.slot}
               stroke="#b8b8c0"
               strokeDasharray="6 6"
             />
@@ -283,6 +284,9 @@ export const Forecast = () => {
                 fontSize: "12px",
                 color: "#777780",
                 paddingTop: "16px",
+              }}
+              labelStyle={{
+                color: "#535353",
               }}
             />
           </ComposedChart>
