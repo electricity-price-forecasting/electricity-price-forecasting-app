@@ -118,7 +118,7 @@ const data = pricePoints.map((point, slot) => ({ ...point, slot }));
 export const Forecast = () => {
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
-  const handleChartClick = (event: { activeLabel?: string | number }) => {
+  const handleChartMouseMove = (event: { activeLabel?: string | number }) => {
     const slot = Number(event.activeLabel);
 
     if (!Number.isInteger(slot)) {
@@ -172,7 +172,7 @@ export const Forecast = () => {
           <ComposedChart
             data={data}
             accessibilityLayer={false}
-            onMouseMove={handleChartClick}
+            onMouseMove={handleChartMouseMove}
             margin={{
               top: 20,
               right: 18,
