@@ -214,6 +214,7 @@ export const Forecast = () => {
               stackId="range"
               stroke="none"
               fill="transparent"
+              activeDot={false}
               legendType="none"
               isAnimationActive={false}
             />
@@ -223,6 +224,7 @@ export const Forecast = () => {
               dataKey="rangeDiff"
               stackId="range"
               stroke="none"
+              activeDot={false}
               fill="#f0f0f8"
               fillOpacity={0.9}
               name="Prices range"
