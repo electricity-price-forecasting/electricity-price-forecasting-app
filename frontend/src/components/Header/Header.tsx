@@ -1,7 +1,9 @@
 import "./Header.scss";
 import logo from "../../assets/logo.svg";
-// import fileIcon from "../../assets/file-button.svg";
+import backButton from "../../assets/arrow-right-icon.svg";
+import { Link } from "react-router-dom";
 // import headphonesIcon from "../../assets/headphones-button.svg";
+// import fileIcon from "../../assets/file-button.svg";
 // import searchIcon from "../../assets/search-icon.svg";
 
 export const Header = () => {
@@ -11,8 +13,8 @@ export const Header = () => {
         <img className="header__logo__img" src={logo} alt="" />
       </a>
 
-      {/*
-        <div className="header__buttonBox">
+      <div className="header__buttonBox">
+        {/*
           <div className="header__buttonBox__search">
             <img
               src={searchIcon}
@@ -35,21 +37,17 @@ export const Header = () => {
               src={fileIcon}
               alt=""
               className="header__buttonBox__button__img"
-            />
+              />
           </a>
-          <a
-            onClick={(e) => e.preventDefault()}
-            href=""
-            className="header__buttonBox__button"
-          >
-            <img
-              src={headphonesIcon}
-              alt=""
-              className="header__buttonBox__button__img"
-            />
-          </a>
-        </div>
-      */}
+              */}
+        <Link to="/" className="header__buttonBox__button">
+          <img
+            src={backButton}
+            alt=""
+            className="header__buttonBox__button__img"
+          />
+        </Link>
+      </div>
     </header>
   );
 };
