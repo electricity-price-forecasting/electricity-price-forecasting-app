@@ -1,6 +1,6 @@
 import "./Header.scss";
 import logo from "../../assets/logo.svg";
-import backButton from "../../assets/arrow-right-icon.svg";
+import backButton from "../../assets/arrow-left-active.svg";
 import { Link } from "react-router-dom";
 // import headphonesIcon from "../../assets/headphones-button.svg";
 // import fileIcon from "../../assets/file-button.svg";
