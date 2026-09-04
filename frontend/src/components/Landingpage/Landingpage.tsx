@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Landingpage.scss';
-import { FeatureCard } from '../../types/landing';
+import type { FeatureCard } from '../../types/landing';
 
 const FEATURES_DATA: FeatureCard[] = [
   {
