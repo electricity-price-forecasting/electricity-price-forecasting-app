@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -8,9 +8,9 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
-} from 'recharts';
-import { PriceDataPoint } from './frontend/src/types/forecast';
+  Legend
+} from "recharts";
+import { PriceDataPoint } from "../../types/forecast";
 
 interface PriceChartProps {
   data: PriceDataPoint[];
@@ -19,13 +19,15 @@ interface PriceChartProps {
 export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
   return (
     <div className="w-full h-96 bg-white p-4 rounded-xl shadow-md border border-gray-100">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Прогноз цін на електроенергію (грн/кВт·год)</h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        Прогноз цін на електроенергію (грн/кВт·год)
+      </h3>
       <ResponsiveContainer width="100%" height="85%">
         <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis dataKey="timestamp" stroke="#6b7280" fontSize={12} />
-          <YAxis stroke="#6b7280" fontSize={12} domain={['auto', 'auto']} />
-          <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }} />
+          <YAxis stroke="#6b7280" fontSize={12} domain={["auto", "auto"]} />
+          <Tooltip contentStyle={{ backgroundColor: "#fff", borderRadius: "8px", border: "1px solid #e5e7eb" }} />
           <Legend />
           
           <Area
@@ -65,3 +67,5 @@ export const PriceChart: React.FC<PriceChartProps> = ({ data }) => {
     </div>
   );
 };
+
+export default PriceChart;
