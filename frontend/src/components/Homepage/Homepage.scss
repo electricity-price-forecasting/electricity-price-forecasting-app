@@ -1,0 +1,266 @@
+$font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+$color-dark: #111111;
+$color-green-dark: #122b16;
+$color-green-link: #1a331e;
+$color-green-sub: #2c4230;
+$color-card-bg: #f8f8f5;
+$color-border: #eaeaea;
+
+.landing {
+  font-family: $font-stack;
+  color: $color-dark;
+  background-color: #ffffff;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=2000&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+
+  .heroOverlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 4rem;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: $color-green-link;
+  }
+
+  .nav {
+    display: flex;
+    gap: 2rem;
+
+    a {
+      color: $color-green-link;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.heroContent {
+  margin-top: 8rem;
+  max-width: 480px;
+
+  .heroTitle {
+    font-size: 3rem;
+    line-height: 1.1;
+    font-weight: 500;
+    color: $color-green-dark;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: $color-green-sub;
+    margin-bottom: 2rem;
+  }
+}
+
+.btnPrimary {
+  background-color: $color-dark;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+/* Features Section */
+.featuresSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+
+  .headerText {
+    max-width: 500px;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #666666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+  }
+}
+
+.btnAction {
+  background-color: $color-dark;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+/* Grid Layout */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  .cardSmall {
+    grid-column: span 1;
+  }
+
+  .cardLarge {
+    grid-column: span 3;
+  }
+}
+
+.card {
+  background-color: $color-card-bg;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 280px;
+
+  .cardTitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #222222;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Mock Graphics */
+.cardPreview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconGroup {
+  display: flex;
+  gap: 0.75rem;
+
+  .badgeIcon {
+    background: #ffffff;
+    padding: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.mockChart,
+.mockList,
+.mockDashboard {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid $color-border;
+}
+
+.mockChart {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+
+  .mockLine {
+    height: 2px;
+    background: #22c55e;
+    width: 60%;
+  }
+
+  .mockBadge {
+    font-size: 0.75rem;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+}
+
+.mockList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+
+  .mockRow,
+  .mockRowActive {
+    height: 12px;
+    border-radius: 3px;
+    background: #f1f5f9;
+  }
+
+  .mockRowActive {
+    background: #cbd5e1;
+    width: 80%;
+  }
+}
+
+.mockDashboard {
+  min-height: 220px;
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+
+  .dashSidebar {
+    width: 20%;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  .dashMain {
+    flex: 1;
+    background: #fafafa;
+    border-radius: 4px;
+  }
+}
