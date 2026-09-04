@@ -34,3 +34,8 @@ class LoadModel(BaseModel):
             "load_lag_96": [df["load"].iloc[-96]],
             "load_lag_672": [df["load"].iloc[-672]],
         })[self.FEATURES]
+
+    def predict_next(self, df: pd.DataFrame) -> float:
+        features_df = self.make_features(df)
+        predictions = self.estimator.predict(features_df)
+        return float(predictions[-1])

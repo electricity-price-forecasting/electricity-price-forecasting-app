@@ -223,3 +223,10 @@ backend/.env
 .idea/
 __pycache__/
 *.pyc
+
+# Generated data
+*.csv
+
+# Cache
+cache/
+data/cache/

@@ -31,3 +31,8 @@ class WindModel(BaseModel):
             "wind_lag_96": [df["wind"].iloc[-96]],
             "wind_lag_672": [df["wind"].iloc[-672]],
         })[self.FEATURES]
+
+    def predict_next(self, df: pd.DataFrame) -> float:
+        features_df = self.make_features(df)
+        predictions = self.estimator.predict(features_df)
+        return float(predictions[-1])

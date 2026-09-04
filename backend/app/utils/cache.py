@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from typing import Callable
 
-from app.config import settings
+from app.src.config import settings
 
 
 def get_cached_or_fetch(

@@ -33,3 +33,8 @@ class SolarModel(BaseModel):
             "solar_lag_96": [df["solar"].iloc[-96]],
             "solar_lag_672": [df["solar"].iloc[-672]],
         })[self.FEATURES]
+
+    def predict_next(self, df: pd.DataFrame) -> float:
+        features_df = self.make_features(df)
+        predictions = self.estimator.predict(features_df)
+        return float(predictions[-1])

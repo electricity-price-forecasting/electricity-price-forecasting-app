@@ -38,3 +38,10 @@ def validate_dates(start, end):
 
 def is_nonworking_day(timestamp: pd.Timestamp) -> int:
     return int(timestamp.weekday() >= 5 or timestamp.date() in holidays.Poland())
+
+def next_timestamp(df: pd.DataFrame) -> pd.Timestamp:
+
+    if not isinstance(df.index, pd.DatetimeIndex):
+        df.index = pd.to_datetime(df.index, utc=True)
+
+    return pd.Timestamp(df.index[-1]) + pd.Timedelta(minutes=15)

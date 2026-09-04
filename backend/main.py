@@ -1,2 +1,1 @@
-if __name__ == "__main__":
-    print_hi("PyCharm")
+updated = pd.concat([raw, new_data.rename_axis("timestamp").reset_index()], ignore_index=True).dropna().drop_duplicates("timestamp", keep="last").sort_values("timestamp").reset_index(drop=True)
