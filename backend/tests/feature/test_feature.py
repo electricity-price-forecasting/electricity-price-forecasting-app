@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 
-from app.src.features.features import Features
+from app.features.features import Features
 from app.utils.time_utils import is_nonworking_day
 
 
@@ -39,7 +39,7 @@ class TestFeatures(unittest.TestCase):
             is_nonworking_day(pd.Timestamp("2026-08-22 14:30", tz="UTC")), 1
         )
 
-    @patch("app.src.features.features.sun_elevation")
+    @patch("app.features.features.sun_elevation")
     def test_add_sun_features(self, mock_sun_elevation):
         mock_sun_elevation.side_effect = [20.5, 25.0]
         index = pd.date_range("2026-08-20 13:00", periods=2, freq="15min", tz="UTC")
@@ -56,7 +56,7 @@ class TestFeatures(unittest.TestCase):
         self.assertTrue(pd.isna(result["price_lag_2"].iloc[0]))
         self.assertEqual(result["price_lag_2"].iloc[2], 10)
 
-    @patch("app.src.features.features.sun_elevation")
+    @patch("app.features.features.sun_elevation")
     def test_transform_all(self, mock_sun_elevation):
         mock_sun_elevation.return_value = 30.0
         index = pd.date_range("2026-08-01", periods=700, freq="15min", tz="UTC")

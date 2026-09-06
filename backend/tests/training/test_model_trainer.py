@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pandas as pd
 
-from app.src.training.trainer import ModelTrainer
+from app.training.trainer import ModelTrainer
 
 
 
@@ -23,7 +23,7 @@ class TestModelTrainer:
         )
 
         with patch(
-            "app.src.training.trainer.pd.read_csv",
+            "app.training.trainer.pd.read_csv",
             return_value=expected,
         ) as read_csv:
             result = trainer.load_dataset("data.csv")
@@ -35,8 +35,8 @@ class TestModelTrainer:
         )
         pd.testing.assert_frame_equal(result, expected)
 
-    @patch("app.src.training.trainer.MODEL_REGISTRY")
-    @patch("app.src.training.trainer.MODEL_FEATURES")
+    @patch("app.training.trainer.MODEL_REGISTRY")
+    @patch("app.training.trainer.MODEL_FEATURES")
     def test_train(self, mock_features, mock_registry):
         trainer = ModelTrainer()
 
@@ -77,7 +77,7 @@ class TestModelTrainer:
 
         model.save.assert_called_once_with("model.pkl")
 
-    @patch("app.src.training.trainer.MODEL_REGISTRY")
+    @patch("app.training.trainer.MODEL_REGISTRY")
     def test_train_uses_first_80_percent_for_training(self, mock_registry):
         trainer = ModelTrainer()
 
@@ -99,7 +99,7 @@ class TestModelTrainer:
         )
 
         with patch(
-            "app.src.training.trainer.MODEL_FEATURES",
+            "app.training.trainer.MODEL_FEATURES",
             {"target": features},
         ):
             with patch.object(
@@ -118,7 +118,7 @@ class TestModelTrainer:
             dataset[["target", "feature_1"]].iloc[:8],
         )
 
-    @patch("app.src.training.trainer.MODEL_REGISTRY")
+    @patch("app.training.trainer.MODEL_REGISTRY")
     def test_train_all(self, mock_registry, caplog):
         trainer = ModelTrainer()
 
