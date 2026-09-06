@@ -20,7 +20,10 @@ dependencies = [
     "lightgbm (>=4.7.0,<5.0.0)",
     "pyarrow (>=25.0.1,<26.0.0)",
     "scikit-learn (>=1.9.0,<2.0.0)",
-    "router (>=0.1,<0.2)"
+    "router (>=0.1,<0.2)",
+    "astral (>=3.2,<4.0)",
+    "lightgbm (>=4.7.0,<5.0.0)",
+    "scikit-learn (>=1.9.0,<2.0.0)"
 ]
 [tool.poetry]
 package-mode = false

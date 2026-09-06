@@ -20,6 +20,8 @@ class LoadModel(BaseModel):
         ))
 
     def make_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        if len(df) < 672:
+            raise ValueError(f"Insufficient history. Required: 672, got: {len(df)}")
 
         next_ts = next_timestamp(df)
 
