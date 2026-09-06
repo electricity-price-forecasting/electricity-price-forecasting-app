@@ -1,7 +1,7 @@
 from entsoe import EntsoePandasClient
 from entsoe.exceptions import NoMatchingDataError
 
-from app.config.settings import settings
+from app.src.config.settings import settings
 import pandas as pd
 
 

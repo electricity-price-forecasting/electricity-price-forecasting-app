@@ -1,13 +1,16 @@
+from pathlib import Path
+
 import pandas as pd
 import logging
 
-from app.config.settings import settings
+from app.src.config.settings import settings
 from app.loader.entsoe_loader import EntsoeLoader
 from app.utils.logger_config import setup_logging
 from app.utils.time_utils import normalize_timezone, resample_to_15min
 from app.utils.cache import get_cached_or_fetch
 from app.utils.file_utils import save_csv
 
+setup_logging()
 logger = logging.getLogger(__name__)
 
 
@@ -31,7 +34,7 @@ class HistoricalDatasetBuilder:
         )
         return merged.sort_index()
 
-    def build(
+    def build_raw_data(
         self, start_date: str, end_date: str, refresh_cache: bool = False
     ) -> pd.DataFrame:
         """
@@ -45,7 +48,7 @@ class HistoricalDatasetBuilder:
         all_months_data = []
 
         for dt in months:
-            refresh_month = dt == months[-1]
+            refresh_month = refresh_cache or dt == months[-1]
             prices = get_cached_or_fetch(
                 fetch_func=self.loader.get_prices,
                 year=dt.year,
@@ -93,30 +96,58 @@ class HistoricalDatasetBuilder:
 
         final_dataset = pd.concat(all_months_data, axis=0, sort=False)
 
-        start_ts = pd.Timestamp(start_date, tz="UTC")
-        end_ts = pd.Timestamp(end_date, tz="UTC")
+        start_ts = pd.to_datetime(start_date, utc=True)
+        end_ts = pd.to_datetime(end_date, utc=True)
         final_dataset = final_dataset.loc[start_ts:end_ts]
 
-        return final_dataset.sort_index()
 
-    setup_logging()
+        return final_dataset.dropna()
+
+    def update_raw_data(self) -> pd.DataFrame:
+        raw_path = Path(settings.raw_file)
+        if not raw_path.exists():
+            return self.run()
+        raw = pd.read_csv(raw_path)
+        raw["timestamp"] = pd.to_datetime(raw["timestamp"], utc=True)
+        last_timestamp = raw["timestamp"].max()
+        now = pd.to_datetime("now", utc=True)
+
+        if last_timestamp >= now:
+            return raw
+
+        new_data = self.build_raw_data(
+            start_date=str(last_timestamp),
+            end_date=str(now),
+            refresh_cache=True,
+        )
+
+        if new_data.empty:
+            return raw
+
+        new_data.index = pd.to_datetime(new_data.index, utc=True)
+        new_data = new_data[new_data.index > last_timestamp]
+
+        if new_data.empty:
+            return raw
+
+        updated = (pd.concat([raw, new_data]).dropna()
+                   .drop_duplicates("timestamp", keep="last").sort_values("timestamp"))
+
+        save_csv(updated, settings.raw_file)
+
+        return updated
 
 
-def main():
-    setup_logging()
+    def run(self):
+        today = pd.Timestamp.now(tz="UTC")
 
-    today = pd.Timestamp.now(tz="UTC")
+        loader = EntsoeLoader()
+        builder = HistoricalDatasetBuilder(loader)
 
-    loader = EntsoeLoader()
-    builder = HistoricalDatasetBuilder(loader)
+        dataset = builder.build_raw_data(
+            start_date=str(today - pd.DateOffset(years=2)),
+            end_date=str(today),
+        )
 
-    dataset = builder.build(
-        start_date=str(today - pd.DateOffset(months=2)),
-        end_date=str(today),
-    )
-
-    save_csv(dataset, settings.raw_file)
-
-
-if __name__ == "__main__":
-    main()
+        save_csv(dataset, settings.raw_file)
+        return dataset

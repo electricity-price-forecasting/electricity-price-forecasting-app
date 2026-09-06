@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy Forecast</title>
+</head>
+<body>
+
+<h1>Energy Forecast</h1>
+
+
+<button id="forecastButton" onclick="runForecast()">Do Forecast</button>
+<button onclick="window.location.href='/forecast'">Open Forecast</button>
+<p id="forecastStatus"></p>
+
+<pre id="forecastResult"></pre>
+
+<script>
+async function runForecast() {
+    const b = document.getElementById("forecastButton");
+    const s = document.getElementById("forecastStatus");
+    const result = document.getElementById("forecastResult");
+
+    b.disabled = true;
+    s.innerText = "Running forecast...";
+    result.innerText = "";
+
+    try {
+        const r = await fetch("/forecast");
+        const d = await r.json();
+
+        if (!r.ok) {
+            throw new Error(d.detail || "Forecast failed");
+        }
+
+        s.innerText = `Forecast created: ${d.rows} rows`;
+
+        result.innerText = JSON.stringify(d.data, null, 2);
+
+    } catch (e) {
+        s.innerText = `Error: ${e.message}`;
+    } finally {
+        b.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>

@@ -35,6 +35,6 @@ class SolarModel(BaseModel):
         })[self.FEATURES]
 
     def predict_next(self, df: pd.DataFrame) -> float:
-        X = self.make_features(df)
-        prediction = self.predict(X)
-        return float(prediction[0])
+        features_df = self.make_features(df)
+        predictions = self.estimator.predict(features_df)
+        return float(predictions[-1])

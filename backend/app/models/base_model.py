@@ -1,11 +1,12 @@
 import pickle
+from abc import abstractmethod, ABC
 from pathlib import Path
 from typing import Any, List
 
 import pandas as pd
 
 
-class BaseModel:
+class BaseModel(ABC):
     """
     Common base class for all forecasting models.
     Provides shared machine-learning functionality.
@@ -88,14 +89,11 @@ class BaseModel:
         with open(input_path, "rb") as file:
             return pickle.load(file)
 
+    @abstractmethod
     def make_features(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Contract for generating model-specific features from historical data.
-        Concrete models (like LoadModel) MUST implement their own version of this method.
-        """
+
         raise NotImplementedError("Subclasses must implement make_features()")
 
+    @abstractmethod
     def predict_next(self, df: pd.DataFrame) -> float:
-        features_df = self.make_features(df)
-        predictions = self.predict(features_df)
-        return float(predictions[-1])
+        raise NotImplementedError
