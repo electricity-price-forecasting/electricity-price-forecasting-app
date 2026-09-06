@@ -4,8 +4,8 @@ from pathlib import Path
 import pandas as pd
 from narwhals import DataFrame
 
-from app.src.features.features import Features
-from app.src.config.settings import settings
+from app.features.features import Features
+from app.config.settings import settings
 
 
 logger = logging.getLogger(__name__)

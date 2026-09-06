@@ -5,14 +5,14 @@ import pandas as pd
 
 from app.loader.entsoe_loader import EntsoeLoader
 from app.services.dataset_builder import HistoricalDatasetBuilder
-from app.src.config.settings import settings
-from app.src.features.features_builder import FeatureBuilder
-from app.src.forecasting.forecast import Forecast
+from app.config.settings import settings
+from app.features.features_builder import FeatureBuilder
+from app.forecasting.forecast import Forecast
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
 from app.models.solar_model import SolarModel
 from app.models.price_model import PriceModel
-from app.src.training.trainer import ModelTrainer
+from app.training.trainer import ModelTrainer
 
 
 class ForecastPipeline:

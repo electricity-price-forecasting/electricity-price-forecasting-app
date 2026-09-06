@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from app.src.config.settings import settings
+from app.config.settings import settings
 from app.models.base_model import BaseModel
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
