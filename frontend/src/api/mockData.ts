@@ -1,0 +1,95 @@
+import type { PricePoint } from "../types/types";
+
+export const pricePoints: PricePoint[] = [
+  { time: "00:00", actual: 56 },
+  { time: "01:00", actual: 59 },
+  { time: "02:00", actual: 62 },
+  { time: "03:00", actual: 63 },
+  { time: "04:00", actual: 65 },
+  { time: "05:00", actual: 75 },
+  { time: "06:00", actual: 64 },
+  { time: "07:00", actual: 42 },
+  { time: "08:00", actual: 54 },
+  { time: "09:00", actual: 72 },
+  { time: "10:00", actual: 84 },
+  { time: "11:00", actual: 90, forecast: 90 },
+
+  {
+    time: "12:00",
+    forecast: 94,
+    rangeBase: 84,
+    rangeDiff: 20,
+  },
+  {
+    time: "13:00",
+    forecast: 109,
+    rangeBase: 88,
+    rangeDiff: 28,
+  },
+  {
+    time: "14:00",
+    forecast: 112,
+    rangeBase: 90,
+    rangeDiff: 26,
+  },
+  {
+    time: "15:00",
+    forecast: 101,
+    rangeBase: 88,
+    rangeDiff: 27,
+  },
+  {
+    time: "16:00",
+    forecast: 115,
+    rangeBase: 92,
+    rangeDiff: 31,
+  },
+  {
+    time: "17:00",
+    forecast: 124,
+    rangeBase: 96,
+    rangeDiff: 34,
+  },
+  {
+    time: "18:00",
+    forecast: 131,
+    rangeBase: 99,
+    rangeDiff: 34,
+  },
+  {
+    time: "19:00",
+    forecast: 120,
+    rangeBase: 92,
+    rangeDiff: 30,
+  },
+  {
+    time: "20:00",
+    forecast: 116,
+    rangeBase: 88,
+    rangeDiff: 27,
+  },
+  {
+    time: "21:00",
+    forecast: 108,
+    rangeBase: 84,
+    rangeDiff: 27,
+  },
+  {
+    time: "22:00",
+    forecast: 104,
+    rangeBase: 82,
+    rangeDiff: 24,
+  },
+  {
+    time: "23:00",
+    forecast: 100,
+    rangeBase: 80,
+    rangeDiff: 23,
+  },
+  {
+    time: "00:00",
+    forecast: 95,
+    rangeBase: 78,
+    rangeDiff: 22,
+  },
+];

@@ -6,3 +6,7 @@ export type PricePoint = {
   rangeBase?: number;
   rangeDiff?: number;
 };
+
+export type ChartPoint = PricePoint & {
+  slot: number;
+};
