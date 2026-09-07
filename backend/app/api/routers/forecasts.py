@@ -1,41 +1,12 @@
-from pathlib import Path
-
-
-import logging
-
-from fastapi import FastAPI, HTTPException, Request, Response
-from fastapi.templating import Jinja2Templates
-
+from fastapi import APIRouter, HTTPException, Response
 from app.services.forecast import ForecastPipeline
 
+router = APIRouter(tags=["Forecast"])
 
-
-app = FastAPI(
-    title="Energy Forecast API",
-    description="API for energy data and forecasts",
-    version="1.0.0",
-)
-
-
-templates = Jinja2Templates(
-    directory=Path(__file__).parent / "templates"
-)
-
-
-logger = logging.getLogger(__name__)
-
-@app.get("/")
-def home(request: Request):
-    return templates.TemplateResponse(
-        request = request,
-        name = "index.html",
-    )
-
-@app.get("/forecast")
+@router.get("/forecast")
 def run_forecast():
     try:
         pipeline = ForecastPipeline()
-
         result = pipeline.run()
 
         if result is None or result.empty:
@@ -56,12 +27,8 @@ def run_forecast():
 
     except HTTPException:
         raise
-
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Forecast failed: {str(e)}",
         )
-
-
-

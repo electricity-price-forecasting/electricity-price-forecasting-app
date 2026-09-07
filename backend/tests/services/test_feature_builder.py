@@ -5,12 +5,12 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from app.src.features.features_builder import FeatureBuilder
+from app.features.features_builder import FeatureBuilder
 
 
 class TestFeatureBuilder(unittest.TestCase):
 
-    @patch("app.src.features.features_builder.Features")
+    @patch("app.features.features_builder.Features")
     def test_build_all(self, mock_features):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)

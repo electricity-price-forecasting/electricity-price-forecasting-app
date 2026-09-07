@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import logging
 
-from app.src.config.settings import settings
+from app.config.settings import settings
 from app.loader.entsoe_loader import EntsoeLoader
 from app.utils.logger_config import setup_logging
 from app.utils.time_utils import normalize_timezone, resample_to_15min
