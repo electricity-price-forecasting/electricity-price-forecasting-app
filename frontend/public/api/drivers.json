@@ -1,0 +1,32 @@
+{
+  "summary": "Prices are expected to fall by 12% tomorrow",
+  "drivers": [
+    {
+      "name": "Wind Generation",
+      "description": "Strong downward pressure",
+      "previous_value": 11,
+      "current_value": 21,
+      "unit": "GW",
+      "change_text": "-2.3%",
+      "trend": "up"
+    },
+    {
+      "name": "Solar Generation",
+      "description": "Downward pressure",
+      "previous_value": 12,
+      "current_value": 21,
+      "unit": "GW",
+      "change_text": "-2.1%",
+      "trend": "up"
+    },
+    {
+      "name": "Electricity Demand",
+      "description": "Moderate demand",
+      "previous_value": 38,
+      "current_value": 42,
+      "unit": "GW",
+      "change_text": "+3€",
+      "trend": "down"
+    }
+  ]
+}

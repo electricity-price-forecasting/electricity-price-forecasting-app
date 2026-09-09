@@ -9,6 +9,14 @@
 
   padding: 24px;
 
+  &__loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+  }
+
   &__textBox {
     display: flex;
     justify-content: space-between;
@@ -116,9 +124,24 @@
         }
       }
 
+      &__changeText {
+        margin-left: 16px;
+
+        font-size: 14px;
+        font-weight: 500;
+      }
+
       &__rate {
         margin-left: 16px;
       }
     }
   }
+}
+
+.red {
+  color: $rateDownTextColor;
+}
+
+.green {
+  color: $rateUpTextColor;
 }

@@ -10,6 +10,14 @@
 
   padding: 24px;
 
+  &__loaderBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+  }
+
   &__titleBox {
     margin-bottom: 8px;
 
@@ -114,9 +122,14 @@
 
       gap: 4px;
 
-      &__infoIcon {
-        width: 47px;
-        height: 21px;
+      &__trendBox {
+        display: flex;
+        gap: 2px;
+
+        &__changeText {
+          font-size: 14px;
+          font-weight: 500;
+        }
       }
 
       &__text {
@@ -126,4 +139,12 @@
       }
     }
   }
+}
+
+.red {
+  color: $rateDownTextColor;
+}
+
+.green {
+  color: $rateUpTextColor;
 }
