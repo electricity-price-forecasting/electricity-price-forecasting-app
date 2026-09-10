@@ -2,9 +2,9 @@ import "./Highlights.scss";
 import rateUpIcon from "../../assets/rate-up-icon.svg";
 import rateDownIcon from "../../assets/rate-down-icon.svg";
 import { useEffect, useState } from "react";
-import { getHighlights } from "../../services/getHighlights";
 import type { HighlightsData } from "../../types/types";
 import { Bars } from "react-loader-spinner";
+import { getHighlights } from "../../services/fetchAPI";
 
 export const Highlights = () => {
   const [highlights, setHighlights] = useState<HighlightsData | null>(null);

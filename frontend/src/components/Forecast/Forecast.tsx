@@ -1,7 +1,6 @@
-import { useState } from "react";
-import type { ChartPoint } from "../../types/types";
+import { useEffect, useState } from "react";
+import type { ChartPoint, ForecastData } from "../../types/types";
 import { CustomTooltip } from "./CustomTooltip";
-import { pricePoints } from "../../api/mockData";
 import "./Forecast.scss";
 import {
   Area,
@@ -15,15 +14,48 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-const data = pricePoints.map((point, slot) => ({ ...point, slot }));
+import { getForecast } from "../../services/fetchAPI";
+import {
+  getForecastDate,
+  mapForecastToChartData,
+} from "../../services/forecastToChartData";
 
 export const Forecast = () => {
+  const [forecastData, setForecastData] = useState<ForecastData[] | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
+  const [forecastInterval, setForecastInterval] = useState("60");
+
+  useEffect(() => {
+    getForecast().then((response) => {
+      if (response) {
+        setForecastData(response);
+      }
+    });
+  }, []);
+
+  const data = mapForecastToChartData(forecastData ?? []);
+
+  const today = getForecastDate(new Date());
+
+  const visibleData = data
+    .filter((element) => {
+      return element.date === today;
+    })
+    .filter((_element, index) => {
+      if (forecastInterval === "60") {
+        return index % 4 === 0;
+      }
+
+      if (forecastInterval === "30") {
+        return index % 2 === 0;
+      }
+
+      return true;
+    });
 
   const time = new Date();
 
-  const shortTime = time.toLocaleTimeString("en-US", {
+  const shortTime = time.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
@@ -68,7 +100,11 @@ export const Forecast = () => {
             </button>
           </div>
 
-          <select className="price-forecast__interval" defaultValue="60">
+          <select
+            className="price-forecast__interval"
+            defaultValue="60"
+            onChange={(e) => setForecastInterval(e.target.value)}
+          >
             <option value="15">15 min</option>
             <option value="30">30 min</option>
             <option value="60">hourly</option>
@@ -81,7 +117,7 @@ export const Forecast = () => {
       <div className="price-forecast__chart">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
-            data={data}
+            data={visibleData}
             accessibilityLayer={false}
             onMouseMove={handleChartMouseMove}
             margin={{
@@ -98,7 +134,7 @@ export const Forecast = () => {
               tickFormatter={(slot: number) => data[slot]?.time.trim() ?? ""}
               axisLine={false}
               tickLine={false}
-              interval={3}
+              interval={4}
               tick={{
                 fill: "#808080",
                 fontSize: 12,
@@ -107,8 +143,8 @@ export const Forecast = () => {
             />
 
             <YAxis
-              domain={[0, 160]}
-              ticks={[0, 40, 80, 120, 160]}
+              domain={[0, 200]}
+              ticks={[0, 40, 80, 120, 160, 200]}
               axisLine={false}
               tickLine={false}
               tick={{
@@ -207,7 +243,7 @@ export const Forecast = () => {
       </div>
 
       <footer className="price-forecast__footer">
-        <span>Forecast generated today, {shortTime}</span>
+        <span>Forecast generated today, {shortTime.toLocaleUpperCase()}</span>
 
         <span>Data sources: ENTSO-E</span>
       </footer>

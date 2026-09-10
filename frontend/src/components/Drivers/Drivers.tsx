@@ -6,10 +6,10 @@ import sunIcon from "../../assets/sun-with-background-icon.svg";
 import peopleIcon from "../../assets/people-background-icon.svg";
 import gasIcon from "../../assets/gas-background.svg";
 import { useEffect, useState } from "react";
-import { getDrivers } from "../../services/getDrivers";
 import type { DriversData } from "../../types/types";
 import classNames from "classnames";
 import { Bars } from "react-loader-spinner";
+import { getDrivers } from "../../services/fetchAPI";
 // import blueArrowRightIcon from "../../assets/blue-arrow-right-icon.svg";
 // import rateGreenIcon from "../../assets/rate-green.svg";
 // import rateRedThreeIcon from "../../assets/rate-red-3.svg";
@@ -71,8 +71,8 @@ export const Drivers = () => {
         </div>
       ) : (
         <>
-          {drivers?.drivers.map((element) => (
-            <div className="drivers__infoPanel">
+          {drivers?.drivers.map((element, index) => (
+            <div className="drivers__infoPanel" key={index}>
               <div className="drivers__infoPanel__textContainer">
                 <img
                   src={getIcon(element.name)}

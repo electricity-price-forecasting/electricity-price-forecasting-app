@@ -1,6 +1,7 @@
 export type PricePoint = {
   slot?: number;
   time: string;
+  date?: string;
   actual?: number;
   forecast?: number;
   rangeBase?: number;
@@ -37,4 +38,9 @@ type DriversMetric = {
 export type DriversData = {
   summary: string;
   drivers: DriversMetric[];
+};
+
+export type ForecastData = {
+  timestamp: string;
+  price: number;
 };

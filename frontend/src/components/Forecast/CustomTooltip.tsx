@@ -17,17 +17,46 @@ export function CustomTooltip({ active, payload }: TooltipProps) {
   }
 
   const priceItem = payload.find(
-    (item) => item.dataKey === "actual" || item.dataKey === "forecast",
+    (item) =>
+      (item.dataKey === "actual" || item.dataKey === "forecast") &&
+      item.value != null &&
+      Number.isFinite(item.value),
   );
-  const time = priceItem?.payload?.time.trim();
 
-  if (!priceItem?.value) {
+  if (priceItem?.value == null) {
     return null;
+  }
+
+  const time = priceItem.payload?.time.trim();
+  const rawDate = priceItem.payload?.date;
+  let date = "";
+
+  if (rawDate) {
+    const [day, month, year] = rawDate.split("/").map(Number);
+    const parsed = new Date(Date.UTC(year, month - 1, day));
+
+    if (
+      Number.isFinite(parsed.getTime()) &&
+      parsed.getUTCFullYear() === year &&
+      parsed.getUTCMonth() === month - 1 &&
+      parsed.getUTCDate() === day
+    ) {
+      date = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(parsed);
+    }
   }
 
   return (
     <div className="price-chart__tooltip">
-      <p className="price-chart__tooltip-date">28 Jul 2026 at {time}</p>
+      {date && time && (
+        <p className="price-chart__tooltip-date">
+          {date} at {time}
+        </p>
+      )}
 
       <div className="price-chart__tooltip__container">
         <p className="price-chart__tooltip__container__price">
