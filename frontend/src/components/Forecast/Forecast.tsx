@@ -53,24 +53,45 @@ export const Forecast = () => {
   const start = new Date(Date.UTC(year, month - 1, day));
   const end = new Date(start);
 
-  const daysByPeriod: Record<ChartPeriods, number> = {
-    [ChartPeriods.day]: 1,
-    [ChartPeriods.week]: 7,
-    [ChartPeriods.month]: 30,
-  };
+  switch (period) {
+    case ChartPeriods.day:
+      end.setUTCDate(end.getUTCDate() + 1);
+      break;
 
-  end.setUTCDate(end.getUTCDate() + daysByPeriod[period]);
+    case ChartPeriods.week:
+      end.setUTCDate(end.getUTCDate() + 7);
+      break;
+
+    case ChartPeriods.month:
+      start.setUTCDate(start.getUTCDate() - 14);
+      end.setUTCDate(end.getUTCDate() + 15);
+      break;
+  }
 
   const startMs = start.getTime();
   const endMs = end.getTime();
 
-  const visibleData = data
-    .filter((element) => {
-      const timestamp = new Date(element.timestamp).getTime();
+  const includeEndPoint =
+    period === ChartPeriods.day ||
+    period === ChartPeriods.week ||
+    (period === ChartPeriods.month && forecastInterval === "day");
 
-      return timestamp >= startMs && timestamp < endMs;
+  const visibleData = data
+    .filter((point) => {
+      const timestamp = new Date(point.timestamp).getTime();
+
+      return (
+        timestamp >= startMs &&
+        (timestamp < endMs || (includeEndPoint && timestamp === endMs))
+      );
     })
-    .filter((_element, index) => {
+    .filter((point, index) => {
+      const timestamp = new Date(point.timestamp).getTime();
+
+      if (includeEndPoint && timestamp === endMs) {
+        return true;
+      }
+
       if (forecastInterval === "60") {
         return index % 4 === 0;
       }
@@ -84,7 +105,45 @@ export const Forecast = () => {
       }
 
       return true;
-    });
+    })
+    .map((point) => ({
+      ...point,
+      timestampMs: new Date(point.timestamp).getTime(),
+    }));
+
+  const hourMs = 60 * 60 * 1000;
+  const dayMs = 24 * hourMs;
+  const tickStep =
+    period === ChartPeriods.day
+      ? 4 * hourMs
+      : period === ChartPeriods.week
+        ? dayMs
+        : 4 * dayMs;
+  const xTicks: number[] = [];
+
+  for (let tick = startMs; tick < endMs; tick += tickStep) {
+    xTicks.push(tick);
+  }
+
+  if (period === ChartPeriods.day || period === ChartPeriods.week) {
+    xTicks.push(endMs);
+  }
+
+  const axisFormatter = new Intl.DateTimeFormat(
+    "en-GB",
+    period === ChartPeriods.day
+      ? {
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23",
+          timeZone: "UTC",
+        }
+      : {
+          day: "2-digit",
+          month: "short",
+          timeZone: "UTC",
+        },
+  );
 
   const time = new Date();
 
@@ -95,13 +154,12 @@ export const Forecast = () => {
   });
 
   const handleChartMouseMove = (event: { activeLabel?: string | number }) => {
-    const slot = Number(event.activeLabel);
-
-    if (!Number.isInteger(slot)) {
+    if (event.activeLabel == null) {
       return;
     }
 
-    const point = data[slot];
+    const timestamp = Number(event.activeLabel);
+    const point = visibleData.find((point) => point.timestampMs === timestamp);
 
     if (point) {
       setSelectedPoint(point);
@@ -109,6 +167,7 @@ export const Forecast = () => {
   };
 
   const handlePeriodChange = (period: ChartPeriods) => {
+    setSelectedPoint(undefined);
     setForecastInterval("60");
     setPeriod(period);
   };
@@ -202,18 +261,36 @@ export const Forecast = () => {
                 <CartesianGrid stroke="#ececf2" vertical={false} />
 
                 <XAxis
-                  dataKey="slot"
-                  tickFormatter={(slot: number) =>
-                    data[slot]?.time.trim() ?? ""
+                  dataKey="timestampMs"
+                  type="number"
+                  scale="time"
+                  domain={[startMs, endMs]}
+                  ticks={xTicks}
+                  tickFormatter={(timestamp: number) =>
+                    axisFormatter.format(new Date(timestamp))
                   }
                   axisLine={false}
                   tickLine={false}
-                  interval={4}
-                  tick={{
-                    fill: "#808080",
-                    fontSize: 12,
+                  interval={0}
+                  tick={({ x, y, payload }) => {
+                    const isFirst = payload.value === xTicks[0];
+                    const isLast = payload.value === xTicks[xTicks.length - 1];
+
+                    return (
+                      <text
+                        x={x}
+                        y={y}
+                        dy={10}
+                        textAnchor={
+                          isFirst ? "start" : isLast ? "end" : "middle"
+                        }
+                        fill="#808080"
+                        fontSize={12}
+                      >
+                        {axisFormatter.format(new Date(payload.value))}
+                      </text>
+                    );
                   }}
-                  dy={10}
                 />
 
                 <YAxis
@@ -259,7 +336,11 @@ export const Forecast = () => {
                 />
 
                 <ReferenceLine
-                  x={selectedPoint?.slot}
+                  x={
+                    visibleData.find(
+                      (point) => point.slot === selectedPoint?.slot,
+                    )?.timestampMs
+                  }
                   stroke="#b8b8c0"
                   strokeDasharray="6 6"
                 />
