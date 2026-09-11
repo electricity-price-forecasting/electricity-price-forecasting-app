@@ -24,11 +24,13 @@ import classNames from "classnames";
 import { Bars } from "react-loader-spinner";
 
 export const Forecast = () => {
-  const [forecastData, setForecastData] = useState<ForecastData[] | null>(null);
+  const [rawData, setRawData] = useState<ForecastData[] | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
   const [forecastInterval, setForecastInterval] = useState("60");
   const [period, setPeriod] = useState(ChartPeriods.day);
+
+  const [generatedTime] = useState(new Date());
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +38,7 @@ export const Forecast = () => {
     getForecast()
       .then((response) => {
         if (response) {
-          setForecastData(response);
+          setRawData(response);
         }
       })
       .finally(() => {
@@ -44,27 +46,27 @@ export const Forecast = () => {
       });
   }, []);
 
-  const data = mapForecastToChartData(forecastData ?? []);
+  const transformedData = mapForecastToChartData(rawData ?? []);
 
   const today = getForecastDate(new Date());
 
   const [day, month, year] = today.split("/").map(Number);
 
-  const start = new Date(Date.UTC(year, month - 1, day));
+  const start = new Date(year, month - 1, day);
   const end = new Date(start);
 
   switch (period) {
     case ChartPeriods.day:
-      end.setUTCDate(end.getUTCDate() + 1);
+      end.setDate(end.getDate() + 1);
       break;
 
     case ChartPeriods.week:
-      end.setUTCDate(end.getUTCDate() + 7);
+      end.setDate(end.getDate() + 7);
       break;
 
     case ChartPeriods.month:
-      start.setUTCDate(start.getUTCDate() - 14);
-      end.setUTCDate(end.getUTCDate() + 15);
+      start.setDate(start.getDate() - 14);
+      end.setDate(end.getDate() + 15);
       break;
   }
 
@@ -76,7 +78,7 @@ export const Forecast = () => {
     period === ChartPeriods.week ||
     (period === ChartPeriods.month && forecastInterval === "day");
 
-  const visibleData = data
+  const visibleData = transformedData
     .filter((point) => {
       const timestamp = new Date(point.timestamp).getTime();
 
@@ -85,23 +87,24 @@ export const Forecast = () => {
         (timestamp < endMs || (includeEndPoint && timestamp === endMs))
       );
     })
-    .filter((point, index) => {
-      const timestamp = new Date(point.timestamp).getTime();
+    .filter((point) => {
+      const date = new Date(point.timestamp);
+      const timestamp = date.getTime();
 
       if (includeEndPoint && timestamp === endMs) {
         return true;
       }
 
       if (forecastInterval === "60") {
-        return index % 4 === 0;
+        return date.getMinutes() === 0;
       }
 
       if (forecastInterval === "30") {
-        return index % 2 === 0;
+        return date.getMinutes() % 30 === 0;
       }
 
       if (forecastInterval === "day") {
-        return index % 96 === 0;
+        return date.getHours() === 0 && date.getMinutes() === 0;
       }
 
       return true;
@@ -111,18 +114,30 @@ export const Forecast = () => {
       timestampMs: new Date(point.timestamp).getTime(),
     }));
 
-  const hourMs = 60 * 60 * 1000;
-  const dayMs = 24 * hourMs;
-  const tickStep =
-    period === ChartPeriods.day
-      ? 4 * hourMs
-      : period === ChartPeriods.week
-        ? dayMs
-        : 4 * dayMs;
+  const firstForecastIndex = visibleData.findIndex(
+    (point) => point.forecast != null,
+  );
+
+  const bridgeIndex =
+    firstForecastIndex > 0 && visibleData[firstForecastIndex - 1].actual != null
+      ? firstForecastIndex - 1
+      : -1;
+
+  const chartData = visibleData.map((point, index) =>
+    index === bridgeIndex ? { ...point, forecast: point.actual } : point,
+  );
+
   const xTicks: number[] = [];
 
-  for (let tick = startMs; tick < endMs; tick += tickStep) {
-    xTicks.push(tick);
+  // Advance by local calendar hours/days, including daylight-saving changes.
+  for (const tick = new Date(start); tick.getTime() < endMs; ) {
+    xTicks.push(tick.getTime());
+
+    if (period === ChartPeriods.day) {
+      tick.setHours(tick.getHours() + 4);
+    } else {
+      tick.setDate(tick.getDate() + (period === ChartPeriods.week ? 1 : 4));
+    }
   }
 
   if (period === ChartPeriods.day || period === ChartPeriods.week) {
@@ -136,18 +151,14 @@ export const Forecast = () => {
           hour: "2-digit",
           minute: "2-digit",
           hourCycle: "h23",
-          timeZone: "UTC",
         }
       : {
           day: "2-digit",
           month: "short",
-          timeZone: "UTC",
         },
   );
 
-  const time = new Date();
-
-  const shortTime = time.toLocaleTimeString("en-GB", {
+  const shortTime = generatedTime.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
@@ -248,7 +259,7 @@ export const Forecast = () => {
           <div className="price-forecast__chart">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
-                data={visibleData}
+                data={chartData}
                 accessibilityLayer={false}
                 onMouseMove={handleChartMouseMove}
                 margin={{

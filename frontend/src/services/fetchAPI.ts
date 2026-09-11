@@ -1,11 +1,13 @@
-const BASE_URL_DRIVERS = "http://localhost:5173/api/drivers.json";
-const BASE_URL_HIGHLIGHTS = "http://localhost:5173/api/highlights.json";
-const BASE_URL_FORECAST = "http://localhost:5173/api/forecast.json";
+const BASE_URL = "http://localhost:5173/api";
+
+const DRIVERS = "/drivers.json";
+const HIGHLIGHTS = "/highlights.json";
+const FORECAST = "/forecast.json";
 
 export function getDrivers() {
-  return fetch(BASE_URL_DRIVERS).then((response) => {
+  return fetch(BASE_URL + DRIVERS).then((response) => {
     if (!response.ok) {
-      return;
+      throw new Error(`${response.status} ${response.statusText}`);
     }
 
     return response.json();
@@ -13,9 +15,9 @@ export function getDrivers() {
 }
 
 export function getHighlights() {
-  return fetch(BASE_URL_HIGHLIGHTS).then((response) => {
+  return fetch(BASE_URL + HIGHLIGHTS).then((response) => {
     if (!response.ok) {
-      return;
+      throw new Error(`${response.status} ${response.statusText}`);
     }
 
     return response.json();
@@ -23,9 +25,9 @@ export function getHighlights() {
 }
 
 export function getForecast() {
-  return fetch(BASE_URL_FORECAST).then((response) => {
+  return fetch(BASE_URL + FORECAST).then((response) => {
     if (!response.ok) {
-      return;
+      throw new Error(`${response.status} ${response.statusText}`);
     }
 
     return response.json();

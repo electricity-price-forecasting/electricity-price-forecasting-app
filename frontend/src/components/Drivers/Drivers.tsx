@@ -1,7 +1,6 @@
 import "./Drivers.scss";
 import windIcon from "../../assets/wind-with-background-icon.svg";
 import arrowIcon from "../../assets/solar-arrow-right-linear.svg";
-import rateRedFiveIcon from "../../assets/rate-red-5.svg";
 import sunIcon from "../../assets/sun-with-background-icon.svg";
 import peopleIcon from "../../assets/people-background-icon.svg";
 import gasIcon from "../../assets/gas-background.svg";
@@ -11,8 +10,6 @@ import classNames from "classnames";
 import { Bars } from "react-loader-spinner";
 import { getDrivers } from "../../services/fetchAPI";
 // import blueArrowRightIcon from "../../assets/blue-arrow-right-icon.svg";
-// import rateGreenIcon from "../../assets/rate-green.svg";
-// import rateRedThreeIcon from "../../assets/rate-red-3.svg";
 
 export const Drivers = () => {
   const [drivers, setDrivers] = useState<DriversData | null>(null);
@@ -144,11 +141,7 @@ export const Drivers = () => {
                 </p>
               </div>
 
-              <img
-                src={rateRedFiveIcon}
-                alt=""
-                className="drivers__infoPanel__infoBox__rate"
-              />
+              <p className="drivers__infoPanel__infoBox__changeText red">+5€</p>
             </div>
           </div>
         </>

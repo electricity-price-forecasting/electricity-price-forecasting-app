@@ -33,19 +33,18 @@ export function CustomTooltip({ active, payload }: TooltipProps) {
 
   if (rawDate) {
     const [day, month, year] = rawDate.split("/").map(Number);
-    const parsed = new Date(Date.UTC(year, month - 1, day));
+    const parsed = new Date(year, month - 1, day);
 
     if (
       Number.isFinite(parsed.getTime()) &&
-      parsed.getUTCFullYear() === year &&
-      parsed.getUTCMonth() === month - 1 &&
-      parsed.getUTCDate() === day
+      parsed.getFullYear() === year &&
+      parsed.getMonth() === month - 1 &&
+      parsed.getDate() === day
     ) {
       date = new Intl.DateTimeFormat("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
-        timeZone: "UTC",
       }).format(parsed);
     }
   }
