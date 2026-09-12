@@ -177,10 +177,18 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
         </div>
 
         <div className="price-forecast__controls">
-          <div className="price-forecast__periods">
+          <div
+            className="price-forecast__periods"
+            role="group"
+            aria-label="Forecast period"
+            data-active-index={
+              [ChartPeriods.day, ChartPeriods.week, ChartPeriods.month].indexOf(period)
+            }
+          >
             <button
               type="button"
               onClick={() => handlePeriodChange(ChartPeriods.day)}
+              aria-pressed={period === ChartPeriods.day}
               className={classNames("price-forecast__period-button", {
                 "price-forecast__period-button--active":
                   period === ChartPeriods.day,
@@ -192,6 +200,7 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
             <button
               type="button"
               onClick={() => handlePeriodChange(ChartPeriods.week)}
+              aria-pressed={period === ChartPeriods.week}
               className={classNames("price-forecast__period-button", {
                 "price-forecast__period-button--active":
                   period === ChartPeriods.week,
@@ -203,6 +212,7 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
             <button
               type="button"
               onClick={() => handlePeriodChange(ChartPeriods.month)}
+              aria-pressed={period === ChartPeriods.month}
               className={classNames("price-forecast__period-button", {
                 "price-forecast__period-button--active":
                   period === ChartPeriods.month,
@@ -214,6 +224,7 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
 
           <select
             className="price-forecast__interval"
+            aria-label="Forecast interval"
             value={forecastInterval}
             onChange={(e) => setForecastInterval(e.target.value)}
           >

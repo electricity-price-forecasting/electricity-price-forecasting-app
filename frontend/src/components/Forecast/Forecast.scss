@@ -27,15 +27,43 @@
   }
 
   &__periods {
-    display: flex;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
     padding: 2px;
     border: 1px solid $mainBorderColor;
     border-radius: $borderRadius;
     background-color: $secondaryBackgroundColor;
     box-shadow: 0 1px 1px #EBEBEB(0 0 0 / 10%);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      bottom: 2px;
+      left: 2px;
+      width: calc((100% - 4px) / 3);
+      border-radius: $borderRadius;
+      background-color: $mainBackgroundColor;
+      box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+      pointer-events: none;
+      transform: translateX(0);
+      transition: transform 0.3s ease;
+    }
+
+    &[data-active-index="1"]::before {
+      transform: translateX(100%);
+    }
+
+    &[data-active-index="2"]::before {
+      transform: translateX(200%);
+    }
   }
 
   &__period-button {
+    position: relative;
+    z-index: 1;
     min-width: 54px;
     height: 32px;
     padding: 0 14px;
@@ -49,9 +77,13 @@
     cursor: pointer;
 
     transition:
-      background-color 0.2s ease,
-      color 0.2s ease,
-      box-shadow 0.2s ease;
+      background-color 0.3s ease,
+      color 0.3s ease;
+
+    &:focus-visible {
+      outline: 2px solid $activeTextColor;
+      outline-offset: 2px;
+    }
 
     &:not(.price-forecast__period-button--active):hover {
       color: $titleColor;
@@ -59,9 +91,14 @@
     }
 
     &--active {
-      background-color: $mainBackgroundColor;
       color: $titleColor;
-      box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__periods::before,
+    &__period-button {
+      transition: none;
     }
   }
 
@@ -77,7 +114,94 @@
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
-    outline: none;
+
+    &:focus-visible {
+      outline: 2px solid $activeTextColor;
+      outline-offset: 3px;
+    }
+
+    @supports (appearance: base-select) {
+      appearance: base-select;
+      align-items: center;
+      gap: 8px;
+      border-radius: $borderRadius;
+      background-color: $secondaryBackgroundColor;
+
+      &::picker(select) {
+        appearance: base-select;
+        margin: -1px 0 0;
+        padding: 0;
+        border: 1px solid $mainBorderColor;
+        border-top: 0;
+        border-radius: 0 0 $borderRadius $borderRadius;
+        background-color: $secondaryBackgroundColor;
+        color: $titleColor;
+        box-shadow: none;
+        font: inherit;
+
+        opacity: 0;
+        transform: translateY(-6px);
+
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease,
+          display 0.3s allow-discrete,
+          overlay 0.3s allow-discrete;
+      }
+
+      &:open::picker(select) {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @starting-style {
+        &:open::picker(select) {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+      }
+
+      &:open {
+        border-bottom-color: transparent;
+        border-radius: $borderRadius $borderRadius 0 0;
+      }
+
+      &::picker-icon {
+        content: "";
+        width: 16px;
+        height: 16px;
+        background: url("../../assets/arrow-down-active.svg") center / contain
+          no-repeat;
+
+        transition: 0.3s ease;
+      }
+
+      &:open::picker-icon {
+        rotate: 180deg;
+      }
+
+      option {
+        min-height: 34px;
+        padding: 0 12px;
+        border: 0;
+        background-color: $secondaryBackgroundColor;
+        font: inherit;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+          background-color: $mainBorderColor;
+        }
+
+        &::checkmark {
+          display: none;
+        }
+
+        &:checked {
+          display: none;
+        }
+      }
+    }
   }
 
   &__unit {
