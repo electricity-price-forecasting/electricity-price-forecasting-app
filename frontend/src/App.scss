@@ -47,6 +47,50 @@ textarea {
       padding: 24px;
 
       background-color: $mainBackgroundColor;
+
+      &__errorBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 16px;
+
+        border: 1px solid $mainBorderColor;
+        border-radius: $borderRadius;
+
+        &__reloadBtn {
+          border: 1px solid $mainBorderColor;
+          border-radius: $borderRadius;
+
+          background-color: $secondaryBackgroundColor;
+
+          width: 216px;
+          height: 42px;
+
+          font-size: 14px;
+          font-weight: 500;
+
+          transition: 0.3s ease;
+
+          cursor: pointer;
+
+          &:hover {
+            background-color: $periodSelectorHover;
+          }
+        }
+      }
     }
   }
+}
+
+.highlight {
+  grid-area: highlights;
+}
+
+.price-drivers {
+  grid-area: drivers;
+}
+
+.chart {
+  grid-area: forecast;
 }

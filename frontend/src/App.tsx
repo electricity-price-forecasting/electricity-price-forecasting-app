@@ -19,6 +19,8 @@ export const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [updatedAt, setUpdatedAt] = useState(new Date());
+
   useEffect(() => {
     Promise.allSettled([getHighlights(), getDrivers(), getForecast()])
       .then(([highlightsResult, driversResult, forecastResult]) => {
@@ -37,7 +39,12 @@ export const App = () => {
       .finally(() => {
         setTimeout(() => setIsLoading(false), 2000);
       });
-  }, []);
+  }, [updatedAt]);
+
+  const reload = () => {
+    setIsLoading(true);
+    setUpdatedAt(new Date());
+  };
 
   return (
     <Routes>
@@ -60,19 +67,43 @@ export const App = () => {
                   {highlights !== null ? (
                     <Highlights highlights={highlights} />
                   ) : (
-                    <p>Unable to load Highlights</p>
+                    <div className="app__body__content__errorBox highlight">
+                      Unable to load Highlights
+                      <button
+                        onClick={() => reload()}
+                        className="app__body__content__errorBox__reloadBtn"
+                      >
+                        Reload
+                      </button>
+                    </div>
                   )}
 
                   {drivers !== null ? (
                     <Drivers drivers={drivers} />
                   ) : (
-                    <p>Unable to load Drivers</p>
+                    <div className="app__body__content__errorBox price-drivers">
+                      Unable to load Price Drivers
+                      <button
+                        onClick={() => reload()}
+                        className="app__body__content__errorBox__reloadBtn"
+                      >
+                        Reload
+                      </button>
+                    </div>
                   )}
 
                   {forecast !== null ? (
                     <Forecast rawData={forecast} />
                   ) : (
-                    <p>Unable to load Forecast</p>
+                    <div className="app__body__content__errorBox chart">
+                      Unable to load Forecast
+                      <button
+                        onClick={() => reload()}
+                        className="app__body__content__errorBox__reloadBtn"
+                      >
+                        Reload
+                      </button>
+                    </div>
                   )}
                 </main>
               </div>
