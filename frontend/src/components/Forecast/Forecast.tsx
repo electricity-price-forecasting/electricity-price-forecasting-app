@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { ChartPoint, ForecastData } from "../../types/types";
 import { CustomTooltip } from "./CustomTooltip";
 import "./Forecast.scss";
@@ -26,6 +26,7 @@ type Props = {
 };
 
 export const Forecast: React.FC<Props> = ({ rawData }) => {
+  const actualPriceGradientId = useId();
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
   const [forecastInterval, setForecastInterval] = useState("60");
@@ -257,6 +258,19 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
               bottom: 5,
             }}
           >
+            <defs>
+              <linearGradient
+                id={actualPriceGradientId}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="15%" stopColor="#494FDF" stopOpacity={0.22} />
+                <stop offset="100%" stopColor="#494FDF" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+
             <CartesianGrid stroke="#ececf2" vertical={false} />
 
             <XAxis
@@ -323,6 +337,21 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
               fill="#f0f0f8"
               fillOpacity={0.9}
               name="Prices range"
+              isAnimationActive={false}
+            />
+
+            <Area
+              type="linear"
+              dataKey="actual"
+              baseValue={0}
+              stroke="none"
+              fill={`url(#${actualPriceGradientId})`}
+              fillOpacity={1}
+              dot={false}
+              activeDot={false}
+              legendType="none"
+              tooltipType="none"
+              connectNulls={true}
               isAnimationActive={false}
             />
 
