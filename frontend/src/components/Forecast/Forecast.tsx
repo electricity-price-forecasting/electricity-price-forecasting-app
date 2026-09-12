@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ChartPoint, ForecastData } from "../../types/types";
 import { CustomTooltip } from "./CustomTooltip";
 import "./Forecast.scss";
@@ -14,39 +14,24 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getForecast } from "../../services/fetchAPI";
 import {
   getForecastDate,
   mapForecastToChartData,
 } from "../../services/forecastToChartData";
 import { ChartPeriods } from "../../types/enums";
 import classNames from "classnames";
-import { Bars } from "react-loader-spinner";
 
-export const Forecast = () => {
-  const [rawData, setRawData] = useState<ForecastData[] | null>(null);
+type Props = {
+  rawData: ForecastData[];
+};
+
+export const Forecast: React.FC<Props> = ({ rawData }) => {
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
   const [forecastInterval, setForecastInterval] = useState("60");
   const [period, setPeriod] = useState(ChartPeriods.day);
 
   const [generatedTime] = useState(new Date());
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    getForecast()
-      .then((response) => {
-        if (response) {
-          setRawData(response);
-        }
-      })
-      .finally(() => {
-        setTimeout(() => setIsLoading(false), 2000);
-      });
-  }, []);
-
-  const transformedData = mapForecastToChartData(rawData ?? []);
 
   const today = getForecastDate(new Date());
 
@@ -77,6 +62,8 @@ export const Forecast = () => {
     period === ChartPeriods.day ||
     period === ChartPeriods.week ||
     (period === ChartPeriods.month && forecastInterval === "day");
+
+  const transformedData = mapForecastToChartData(rawData ?? []);
 
   const visibleData = transformedData
     .filter((point) => {
@@ -129,7 +116,6 @@ export const Forecast = () => {
 
   const xTicks: number[] = [];
 
-  // Advance by local calendar hours/days, including daylight-saving changes.
   for (const tick = new Date(start); tick.getTime() < endMs; ) {
     xTicks.push(tick.getTime());
 
@@ -190,233 +176,217 @@ export const Forecast = () => {
           <h2 className="price-forecast__title">Price Forecast</h2>
         </div>
 
-        {!isLoading && (
-          <div className="price-forecast__controls">
-            <div className="price-forecast__periods">
-              <button
-                type="button"
-                onClick={() => handlePeriodChange(ChartPeriods.day)}
-                className={classNames("price-forecast__period-button", {
-                  "price-forecast__period-button--active":
-                    period === ChartPeriods.day,
-                })}
-              >
-                24h
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handlePeriodChange(ChartPeriods.week)}
-                className={classNames("price-forecast__period-button", {
-                  "price-forecast__period-button--active":
-                    period === ChartPeriods.week,
-                })}
-              >
-                1w
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handlePeriodChange(ChartPeriods.month)}
-                className={classNames("price-forecast__period-button", {
-                  "price-forecast__period-button--active":
-                    period === ChartPeriods.month,
-                })}
-              >
-                1m
-              </button>
-            </div>
-
-            <select
-              className="price-forecast__interval"
-              value={forecastInterval}
-              onChange={(e) => setForecastInterval(e.target.value)}
+        <div className="price-forecast__controls">
+          <div className="price-forecast__periods">
+            <button
+              type="button"
+              onClick={() => handlePeriodChange(ChartPeriods.day)}
+              className={classNames("price-forecast__period-button", {
+                "price-forecast__period-button--active":
+                  period === ChartPeriods.day,
+              })}
             >
-              {period !== ChartPeriods.week &&
-                period !== ChartPeriods.month && (
-                  <option value="15">15 min</option>
-                )}
-              {period !== ChartPeriods.month && (
-                <option value="30">30 min</option>
-              )}
-              <option value="60">hourly</option>
-              {period === ChartPeriods.month && (
-                <option value="day">daily</option>
-              )}
-            </select>
+              24h
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handlePeriodChange(ChartPeriods.week)}
+              className={classNames("price-forecast__period-button", {
+                "price-forecast__period-button--active":
+                  period === ChartPeriods.week,
+              })}
+            >
+              1w
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handlePeriodChange(ChartPeriods.month)}
+              className={classNames("price-forecast__period-button", {
+                "price-forecast__period-button--active":
+                  period === ChartPeriods.month,
+              })}
+            >
+              1m
+            </button>
           </div>
-        )}
+
+          <select
+            className="price-forecast__interval"
+            value={forecastInterval}
+            onChange={(e) => setForecastInterval(e.target.value)}
+          >
+            {period !== ChartPeriods.week && period !== ChartPeriods.month && (
+              <option value="15">15 min</option>
+            )}
+            {period !== ChartPeriods.month && (
+              <option value="30">30 min</option>
+            )}
+            <option value="60">hourly</option>
+            {period === ChartPeriods.month && (
+              <option value="day">daily</option>
+            )}
+          </select>
+        </div>
       </header>
 
-      {isLoading ? (
-        <div className="price-forecast__loader">
-          <Bars color="#0047F4" />
-        </div>
-      ) : (
-        <>
-          <div className="price-forecast__unit">€/MWh</div>
+      <div className="price-forecast__unit">€/MWh</div>
 
-          <div className="price-forecast__chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart
-                data={chartData}
-                accessibilityLayer={false}
-                onMouseMove={handleChartMouseMove}
-                margin={{
-                  top: 20,
-                  right: 18,
-                  left: -12,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid stroke="#ececf2" vertical={false} />
+      <div className="price-forecast__chart">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            data={chartData}
+            accessibilityLayer={false}
+            onMouseMove={handleChartMouseMove}
+            margin={{
+              top: 20,
+              right: 18,
+              left: -12,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid stroke="#ececf2" vertical={false} />
 
-                <XAxis
-                  dataKey="timestampMs"
-                  type="number"
-                  scale="time"
-                  domain={[startMs, endMs]}
-                  ticks={xTicks}
-                  tickFormatter={(timestamp: number) =>
-                    axisFormatter.format(new Date(timestamp))
-                  }
-                  axisLine={false}
-                  tickLine={false}
-                  interval={0}
-                  tick={({ x, y, payload }) => {
-                    const isFirst = payload.value === xTicks[0];
-                    const isLast = payload.value === xTicks[xTicks.length - 1];
+            <XAxis
+              dataKey="timestampMs"
+              type="number"
+              scale="time"
+              domain={[startMs, endMs]}
+              ticks={xTicks}
+              tickFormatter={(timestamp: number) =>
+                axisFormatter.format(new Date(timestamp))
+              }
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              tick={({ x, y, payload }) => {
+                const isFirst = payload.value === xTicks[0];
+                const isLast = payload.value === xTicks[xTicks.length - 1];
 
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        dy={10}
-                        textAnchor={
-                          isFirst ? "start" : isLast ? "end" : "middle"
-                        }
-                        fill="#808080"
-                        fontSize={12}
-                      >
-                        {axisFormatter.format(new Date(payload.value))}
-                      </text>
-                    );
-                  }}
-                />
+                return (
+                  <text
+                    x={x}
+                    y={y}
+                    dy={10}
+                    textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
+                    fill="#808080"
+                    fontSize={12}
+                  >
+                    {axisFormatter.format(new Date(payload.value))}
+                  </text>
+                );
+              }}
+            />
 
-                <YAxis
-                  domain={[0, 200]}
-                  ticks={[0, 40, 80, 120, 160, 200]}
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: "#808080",
-                    fontSize: 12,
-                  }}
-                />
+            <YAxis
+              domain={[0, 200]}
+              ticks={[0, 40, 80, 120, 160, 200]}
+              axisLine={false}
+              tickLine={false}
+              tick={{
+                fill: "#808080",
+                fontSize: 12,
+              }}
+            />
 
-                <Tooltip content={<CustomTooltip />} cursor={false} />
+            <Tooltip content={<CustomTooltip />} cursor={false} />
 
-                <Area
-                  type="linear"
-                  dataKey="rangeBase"
-                  stackId="range"
-                  stroke="none"
-                  fill="transparent"
-                  activeDot={false}
-                  legendType="none"
-                  isAnimationActive={false}
-                />
+            <Area
+              type="linear"
+              dataKey="rangeBase"
+              stackId="range"
+              stroke="none"
+              fill="transparent"
+              activeDot={false}
+              legendType="none"
+              isAnimationActive={false}
+            />
 
-                <Area
-                  type="linear"
-                  dataKey="rangeDiff"
-                  stackId="range"
-                  stroke="none"
-                  activeDot={false}
-                  fill="#f0f0f8"
-                  fillOpacity={0.9}
-                  name="Prices range"
-                  isAnimationActive={false}
-                />
+            <Area
+              type="linear"
+              dataKey="rangeDiff"
+              stackId="range"
+              stroke="none"
+              activeDot={false}
+              fill="#f0f0f8"
+              fillOpacity={0.9}
+              name="Prices range"
+              isAnimationActive={false}
+            />
 
-                <ReferenceLine
-                  y={selectedPoint?.actual ?? selectedPoint?.forecast}
-                  stroke="#9d9da7"
-                  strokeDasharray="6 6"
-                />
+            <ReferenceLine
+              y={selectedPoint?.actual ?? selectedPoint?.forecast}
+              stroke="#9d9da7"
+              strokeDasharray="6 6"
+            />
 
-                <ReferenceLine
-                  x={
-                    visibleData.find(
-                      (point) => point.slot === selectedPoint?.slot,
-                    )?.timestampMs
-                  }
-                  stroke="#b8b8c0"
-                  strokeDasharray="6 6"
-                />
+            <ReferenceLine
+              x={
+                visibleData.find((point) => point.slot === selectedPoint?.slot)
+                  ?.timestampMs
+              }
+              stroke="#b8b8c0"
+              strokeDasharray="6 6"
+            />
 
-                <Line
-                  type="linear"
-                  dataKey="actual"
-                  stroke="#6E55FF"
-                  strokeWidth={1.2}
-                  dot={false}
-                  activeDot={{
-                    r: 4,
-                    fill: "#EAF5FF",
-                    stroke: "#007DFF",
-                    strokeWidth: 1,
-                  }}
-                  name="Actual price"
-                  connectNulls={true}
-                  isAnimationActive={false}
-                />
+            <Line
+              type="linear"
+              dataKey="actual"
+              stroke="#6E55FF"
+              strokeWidth={1.2}
+              dot={false}
+              activeDot={{
+                r: 4,
+                fill: "#EAF5FF",
+                stroke: "#007DFF",
+                strokeWidth: 1,
+              }}
+              name="Actual price"
+              connectNulls={true}
+              isAnimationActive={false}
+            />
 
-                <Line
-                  type="linear"
-                  dataKey="forecast"
-                  stroke="#007DFF"
-                  strokeWidth={1.2}
-                  strokeDasharray="3 3"
-                  dot={false}
-                  activeDot={{
-                    r: 4,
-                    fill: "#EAF5FF",
-                    stroke: "#007DFF",
-                    strokeWidth: 1,
-                  }}
-                  name="Forecast"
-                  connectNulls={true}
-                  isAnimationActive={false}
-                />
+            <Line
+              type="linear"
+              dataKey="forecast"
+              stroke="#007DFF"
+              strokeWidth={1.2}
+              strokeDasharray="3 3"
+              dot={false}
+              activeDot={{
+                r: 4,
+                fill: "#EAF5FF",
+                stroke: "#007DFF",
+                strokeWidth: 1,
+              }}
+              name="Forecast"
+              connectNulls={true}
+              isAnimationActive={false}
+            />
 
-                <Legend
-                  verticalAlign="bottom"
-                  height={44}
-                  iconType="plainline"
-                  wrapperStyle={{
-                    fontSize: "12px",
-                    color: "#777780",
-                    paddingTop: "16px",
-                  }}
-                  labelStyle={{
-                    color: "#535353",
-                  }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+            <Legend
+              verticalAlign="bottom"
+              height={44}
+              iconType="plainline"
+              wrapperStyle={{
+                fontSize: "12px",
+                color: "#777780",
+                paddingTop: "16px",
+              }}
+              labelStyle={{
+                color: "#535353",
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
 
-          <footer className="price-forecast__footer">
-            <span>
-              Forecast generated today, {shortTime.toLocaleUpperCase()}
-            </span>
+      <footer className="price-forecast__footer">
+        <span>Forecast generated today, {shortTime.toLocaleUpperCase()}</span>
 
-            <span>Data sources: ENTSO-E</span>
-          </footer>
-        </>
-      )}
+        <span>Data sources: ENTSO-E</span>
+      </footer>
     </section>
   );
 };

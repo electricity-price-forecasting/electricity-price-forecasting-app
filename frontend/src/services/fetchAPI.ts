@@ -1,10 +1,12 @@
+import type { DriversData, ForecastData, HighlightsData } from "../types/types";
+
 const BASE_URL = "http://localhost:5173/api";
 
 const DRIVERS = "/drivers.json";
 const HIGHLIGHTS = "/highlights.json";
 const FORECAST = "/forecast.json";
 
-export function getDrivers() {
+export function getDrivers(): Promise<DriversData> {
   return fetch(BASE_URL + DRIVERS).then((response) => {
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -14,7 +16,7 @@ export function getDrivers() {
   });
 }
 
-export function getHighlights() {
+export function getHighlights(): Promise<HighlightsData> {
   return fetch(BASE_URL + HIGHLIGHTS).then((response) => {
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -24,7 +26,7 @@ export function getHighlights() {
   });
 }
 
-export function getForecast() {
+export function getForecast(): Promise<ForecastData[]> {
   return fetch(BASE_URL + FORECAST).then((response) => {
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);

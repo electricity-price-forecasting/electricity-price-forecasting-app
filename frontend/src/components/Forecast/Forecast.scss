@@ -9,14 +9,6 @@
   box-sizing: border-box;
   grid-area: forecast;
 
-  &__loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    height: 100%;
-  }
-
   &__header {
     display: flex;
     justify-content: space-between;
@@ -61,8 +53,9 @@
       color 0.2s ease,
       box-shadow 0.2s ease;
 
-    &:hover {
+    &:not(.price-forecast__period-button--active):hover {
       color: $titleColor;
+      background-color: $periodSelectorHover;
     }
 
     &--active {
