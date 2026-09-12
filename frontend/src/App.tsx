@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getDrivers, getForecast, getHighlights } from "./services/fetchAPI";
 import { Bars } from "react-loader-spinner";
 import type { DriversData, ForecastData, HighlightsData } from "./types/types";
+import { PageNotFound } from "./components/PageNotFound";
 // import { Sidebar } from "./components/Sidebar";
 
 export const App = () => {
@@ -54,23 +55,24 @@ export const App = () => {
             ) : (
               <div className="app__body">
                 {/*<Sidebar />*/}
+
                 <main className="app__body__content">
                   {highlights !== null ? (
                     <Highlights highlights={highlights} />
                   ) : (
-                    <p>Не удалось загрузить Highlights</p>
+                    <p>Unable to load Highlights</p>
                   )}
 
                   {drivers !== null ? (
                     <Drivers drivers={drivers} />
                   ) : (
-                    <p>Не удалось загрузить Drivers</p>
+                    <p>Unable to load Drivers</p>
                   )}
 
                   {forecast !== null ? (
                     <Forecast rawData={forecast} />
                   ) : (
-                    <p>Не удалось загрузить Forecast</p>
+                    <p>Unable to load Forecast</p>
                   )}
                 </main>
               </div>
@@ -78,6 +80,7 @@ export const App = () => {
           </div>
         }
       />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
