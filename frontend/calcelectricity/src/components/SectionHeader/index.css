@@ -1,0 +1,33 @@
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.section-header__text {
+  max-width: 560px;
+}
+
+.section-header__title {
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 700;
+}
+
+.section-header__desc {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--color-ink-soft);
+}
+
+.section-header__cta {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .section-header__cta {
+    width: 100%;
+  }
+}
