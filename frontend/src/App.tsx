@@ -55,59 +55,60 @@ export const App = () => {
           <div className="app">
             <Header />
 
-            {isLoading ? (
-              <div className="app__loader">
-                <Bars color="#0047F4" />
-              </div>
-            ) : (
-              <div className="app__body">
-                {/*<Sidebar />*/}
-
-                <main className="app__body__content">
-                  {highlights !== null ? (
-                    <Highlights highlights={highlights} />
-                  ) : (
-                    <div className="app__body__content__errorBox highlight">
-                      Unable to load Highlights
-                      <button
-                        onClick={() => reload()}
-                        className="app__body__content__errorBox__reloadBtn"
-                      >
-                        Reload
-                      </button>
-                    </div>
-                  )}
-
-                  {drivers !== null ? (
-                    <Drivers drivers={drivers} />
-                  ) : (
-                    <div className="app__body__content__errorBox price-drivers">
-                      Unable to load Price Drivers
-                      <button
-                        onClick={() => reload()}
-                        className="app__body__content__errorBox__reloadBtn"
-                      >
-                        Reload
-                      </button>
-                    </div>
-                  )}
-
-                  {forecast !== null ? (
-                    <Forecast rawData={forecast} />
-                  ) : (
-                    <div className="app__body__content__errorBox chart">
-                      Unable to load Forecast
-                      <button
-                        onClick={() => reload()}
-                        className="app__body__content__errorBox__reloadBtn"
-                      >
-                        Reload
-                      </button>
-                    </div>
-                  )}
-                </main>
+            {isLoading && (
+              <div className="app__loader-overlay">
+                <div className="app__loader-overlay__loader">
+                  <Bars color="#0047F4" />
+                </div>
               </div>
             )}
+            <div className="app__body">
+              {/*<Sidebar />*/}
+
+              <main className="app__body__content">
+                {highlights !== null ? (
+                  <Highlights highlights={highlights} />
+                ) : (
+                  <div className="app__body__content__errorBox highlight">
+                    Unable to load Highlights
+                    <button
+                      onClick={() => reload()}
+                      className="app__body__content__errorBox__reloadBtn"
+                    >
+                      Reload
+                    </button>
+                  </div>
+                )}
+
+                {drivers !== null ? (
+                  <Drivers drivers={drivers} />
+                ) : (
+                  <div className="app__body__content__errorBox price-drivers">
+                    Unable to load Price Drivers
+                    <button
+                      onClick={() => reload()}
+                      className="app__body__content__errorBox__reloadBtn"
+                    >
+                      Reload
+                    </button>
+                  </div>
+                )}
+
+                {forecast !== null ? (
+                  <Forecast rawData={forecast} />
+                ) : (
+                  <div className="app__body__content__errorBox chart">
+                    Unable to load Forecast
+                    <button
+                      onClick={() => reload()}
+                      className="app__body__content__errorBox__reloadBtn"
+                    >
+                      Reload
+                    </button>
+                  </div>
+                )}
+              </main>
+            </div>
           </div>
         }
       />
