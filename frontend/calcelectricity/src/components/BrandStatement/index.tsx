@@ -3,11 +3,13 @@ import './index.css'
 export default function BrandStatement() {
   return (
     <section className="brand-statement section">
-      <div className="container brand-statement__inner">
-        <span className="brand-statement__kicker">Our mission</span>
+      <span className="brand-statement__kicker">We are</span>
         <h2 className="brand-statement__word" aria-label="Voltio">Voltio</h2>
+      <div className="container brand-statement__inner">
+        
+        <h4>Know what changed. Understand what matter</h4>
         <p className="brand-statement__text">
-        Make the price of electricity as clear and predictable as the weather forecast — so that everyone can plan their consumption in advance.
+        Monitor European electricity-price forecasts, understand revisions and evaluate confidence —all in one place 
         </p>
       </div>
     </section>

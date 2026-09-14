@@ -26,7 +26,7 @@ function Hero() {
         </p>
 
         <a href="#calculator" className="hero-button">
-          Calculate cost
+        Open dashboard
         </a>
       </div>
     </section>
