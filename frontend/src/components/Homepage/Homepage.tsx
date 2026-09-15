@@ -1,6 +1,7 @@
 import "./Homepage.scss";
 import { HeroSection } from "./HeroSection";
-import { InfoSection } from "./InfoSection";
+import { DashboardSection } from "./DashboardSection";
+import { WorkflowSection } from "./WorkflowSection";
 
 export const Homepage = () => {
   return (
@@ -13,7 +14,9 @@ export const Homepage = () => {
           <div className="homepage__main__logo-box__logo-container"></div>
         </section>
 
-        <InfoSection />
+        <DashboardSection />
+
+        <WorkflowSection />
       </main>
     </div>
   );

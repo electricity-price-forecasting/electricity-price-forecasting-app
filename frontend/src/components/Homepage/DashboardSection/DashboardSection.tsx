@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import "./InfoSection.scss";
+import "./DashboardSection.scss";
 import arrowRight from "../../../assets/landing/cta-arrow-right.svg";
 import background from "../../../assets/landing/desktop-background.png";
 
-export const InfoSection = () => {
+export const DashboardSection = () => {
   return (
     <>
       <section className="info-dashboard">
