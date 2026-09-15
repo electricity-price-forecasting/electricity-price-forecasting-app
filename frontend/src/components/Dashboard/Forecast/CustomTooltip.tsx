@@ -1,4 +1,4 @@
-import type { PricePoint } from "../../types/types";
+import type { PricePoint } from "../../../types/types";
 import "./Forecast.scss";
 
 type TooltipProps = {

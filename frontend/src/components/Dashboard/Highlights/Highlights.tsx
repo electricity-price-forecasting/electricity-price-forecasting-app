@@ -1,7 +1,7 @@
 import "./Highlights.scss";
-import rateUpIcon from "../../assets/rate-up-icon.svg";
-import rateDownIcon from "../../assets/rate-down-icon.svg";
-import type { HighlightsData } from "../../types/types";
+import rateUpIcon from "../../../assets/rate-up-icon.svg";
+import rateDownIcon from "../../../assets/rate-down-icon.svg";
+import type { HighlightsData } from "../../../types/types";
 
 type Props = {
   highlights: HighlightsData;

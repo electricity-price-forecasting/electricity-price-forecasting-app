@@ -1,17 +1,17 @@
 import "./Sidebar.scss";
-import tvIcon from "../../assets/tv-icon.svg";
-import compassIcon from "../../assets/compass-icon.svg";
-import fastForwardIcon from "../../assets/fast-forward-icon.svg";
-import barChartIcon from "../../assets/bar-chart-icon.svg";
-import barLineChartIcon from "../../assets/bar-line-chart-icon.svg";
-import charBreakoutIcon from "../../assets/chart-breakout-circle-icon.svg";
-import dataFlowIcon from "../../assets/dataflow-icon.svg";
-import fileIcon from "../../assets/file-icon.svg";
-import bellIcon from "../../assets/bell-icon.svg";
-import presentationChartIcon from "../../assets/presentation-chart-icon.svg";
-import coinsIcon from "../../assets/coins-icon.svg";
-import settingsIcon from "../../assets/settings-icon.svg";
-import arrowRightIcon from "../../assets/arrow-right-icon.svg";
+import tvIcon from "../../../assets/tv-icon.svg";
+import compassIcon from "../../../assets/compass-icon.svg";
+import fastForwardIcon from "../../../assets/fast-forward-icon.svg";
+import barChartIcon from "../../../assets/bar-chart-icon.svg";
+import barLineChartIcon from "../../../assets/bar-line-chart-icon.svg";
+import charBreakoutIcon from "../../../assets/chart-breakout-circle-icon.svg";
+import dataFlowIcon from "../../../assets/dataflow-icon.svg";
+import fileIcon from "../../../assets/file-icon.svg";
+import bellIcon from "../../../assets/bell-icon.svg";
+import presentationChartIcon from "../../../assets/presentation-chart-icon.svg";
+import coinsIcon from "../../../assets/coins-icon.svg";
+import settingsIcon from "../../../assets/settings-icon.svg";
+import arrowRightIcon from "../../../assets/arrow-right-icon.svg";
 
 export const Sidebar = () => {
   return (

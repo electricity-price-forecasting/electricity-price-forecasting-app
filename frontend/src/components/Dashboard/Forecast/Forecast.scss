@@ -1,4 +1,4 @@
-@use "../../utils/variables" as *;
+@use "../../../utils/variables" as *;
 
 .price-forecast {
   width: 100%;
@@ -170,8 +170,8 @@
         content: "";
         width: 16px;
         height: 16px;
-        background: url("../../assets/arrow-down-active.svg") center / contain
-          no-repeat;
+        background: url("../../../assets/arrow-down-active.svg") center /
+          contain no-repeat;
 
         transition: 0.3s ease;
       }

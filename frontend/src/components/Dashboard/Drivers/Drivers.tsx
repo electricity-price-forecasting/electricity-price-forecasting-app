@@ -1,12 +1,12 @@
 import "./Drivers.scss";
-import windIcon from "../../assets/wind-with-background-icon.svg";
-import arrowIcon from "../../assets/solar-arrow-right-linear.svg";
-import sunIcon from "../../assets/sun-with-background-icon.svg";
-import peopleIcon from "../../assets/people-background-icon.svg";
-import gasIcon from "../../assets/gas-background.svg";
-import type { DriversData } from "../../types/types";
+import windIcon from "../../../assets/wind-with-background-icon.svg";
+import arrowIcon from "../../../assets/solar-arrow-right-linear.svg";
+import sunIcon from "../../../assets/sun-with-background-icon.svg";
+import peopleIcon from "../../../assets/people-background-icon.svg";
+import gasIcon from "../../../assets/gas-background.svg";
+import type { DriversData } from "../../../types/types";
 import classNames from "classnames";
-// import blueArrowRightIcon from "../../assets/blue-arrow-right-icon.svg";
+// import blueArrowRightIcon from "../../../assets/blue-arrow-right-icon.svg";
 
 type Props = {
   drivers: DriversData;

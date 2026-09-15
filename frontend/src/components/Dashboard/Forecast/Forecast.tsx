@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import type { ChartPoint, ForecastData } from "../../types/types";
+import type { ChartPoint, ForecastData } from "../../../types/types";
 import { CustomTooltip } from "./CustomTooltip";
 import "./Forecast.scss";
 import {
@@ -17,8 +17,8 @@ import {
 import {
   getForecastDate,
   mapForecastToChartData,
-} from "../../services/forecastToChartData";
-import { ChartPeriods } from "../../types/enums";
+} from "../../../services/forecastToChartData";
+import { ChartPeriods } from "../../../types/enums";
 import classNames from "classnames";
 
 type Props = {

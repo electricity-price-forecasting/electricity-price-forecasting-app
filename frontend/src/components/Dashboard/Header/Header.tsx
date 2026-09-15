@@ -1,10 +1,10 @@
 import "./Header.scss";
-import logo from "../../assets/logo.svg";
-import backButton from "../../assets/arrow-left-active.svg";
+import logo from "../../../assets/logo.svg";
+import backButton from "../../../assets/arrow-left-active.svg";
 import { Link } from "react-router-dom";
-// import headphonesIcon from "../../assets/headphones-button.svg";
-// import fileIcon from "../../assets/file-button.svg";
-// import searchIcon from "../../assets/search-icon.svg";
+// import headphonesIcon from "../../../assets/headphones-button.svg";
+// import fileIcon from "../../../assets/file-button.svg";
+// import searchIcon from "../../../assets/search-icon.svg";
 
 export const Header = () => {
   return (
