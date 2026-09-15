@@ -2,7 +2,8 @@ import "./Homepage.scss";
 import { HeroSection } from "./HeroSection";
 import { DashboardSection } from "./DashboardSection";
 import { WorkflowSection } from "./WorkflowSection";
-import { MarketSection } from "./DashboardSection/MarketSection";
+import { MarketSection } from "./MarketSection";
+import { ReviewSection } from "./ReviewsSection";
 
 export const Homepage = () => {
   return (
@@ -20,6 +21,8 @@ export const Homepage = () => {
         <WorkflowSection />
 
         <MarketSection />
+
+        <ReviewSection />
       </main>
     </div>
   );

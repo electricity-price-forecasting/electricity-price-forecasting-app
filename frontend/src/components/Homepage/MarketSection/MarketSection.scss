@@ -1,4 +1,4 @@
-@use "../../../../utils/variables" as *;
+@use "../../../utils/variables" as *;
 
 .info-market {
   position: relative;
@@ -99,19 +99,19 @@
 }
 
 .card-1 {
-  background-image: url("../../../../assets/landing/market-card-1.png");
+  background-image: url("../../../assets/landing/market-card-1.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .card-2 {
-  background-image: url("../../../../assets/landing/market-card-2.png");
+  background-image: url("../../../assets/landing/market-card-2.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .card-3 {
-  background-image: url("../../../../assets/landing/market-card-3.png");
+  background-image: url("../../../assets/landing/market-card-3.png");
   background-size: contain;
   background-repeat: no-repeat;
 }
