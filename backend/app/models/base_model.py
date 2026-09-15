@@ -11,6 +11,7 @@ class BaseModel(ABC):
     Common base class for all forecasting models.
     Provides shared machine-learning functionality.
     """
+
     TARGET: str = ""
     FEATURES: List[str] = []
 
@@ -36,10 +37,14 @@ class BaseModel(ABC):
         missing_features = [feat for feat in self.FEATURES if feat not in df.columns]
 
         if missing_features:
-            raise ValueError(f"Missing required features in training data: {missing_features}")
+            raise ValueError(
+                f"Missing required features in training data: {missing_features}"
+            )
 
         if self.TARGET not in df.columns:
-            raise ValueError(f"Target column '{self.TARGET}' is missing from training data.")
+            raise ValueError(
+                f"Target column '{self.TARGET}' is missing from training data."
+            )
 
         X = df[self.FEATURES]
         y = df[self.TARGET]
@@ -61,7 +66,9 @@ class BaseModel(ABC):
 
         missing_features = [feat for feat in self.FEATURES if feat not in df.columns]
         if missing_features:
-            raise ValueError(f"Missing required features for prediction: {missing_features}")
+            raise ValueError(
+                f"Missing required features for prediction: {missing_features}"
+            )
 
         X = df[self.FEATURES]
 

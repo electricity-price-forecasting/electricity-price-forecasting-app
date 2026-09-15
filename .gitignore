@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# Generated data
+app/data/
+
+# Cache files
+*.parquet
+*.cache
+
+# Trained model files
+*.pkl
+
 # Distribution / packaging
 .idea
 .Python

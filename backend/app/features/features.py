@@ -64,6 +64,10 @@ class Features:
             df = self.add_lags(df, name, lags)
 
         df = df.dropna()
-        logger.info("Feature engineering completed: %d rows, %d columns",len(df), len(df.columns))
+        logger.info(
+            "Feature engineering completed: %d rows, %d columns",
+            len(df),
+            len(df.columns),
+        )
 
         return df

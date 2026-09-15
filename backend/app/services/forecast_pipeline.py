@@ -1,29 +1,29 @@
-
+import logging
 from pathlib import Path
 
 import pandas as pd
 
-from app.loader.entsoe_loader import EntsoeLoader
-from app.services.dataset_builder import HistoricalDatasetBuilder
 from app.config.settings import settings
-from app.features.features_builder import FeatureBuilder
 from app.forecasting.forecast import Forecast
+from app.loader.entsoe_loader import EntsoeLoader
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
 from app.models.solar_model import SolarModel
 from app.models.price_model import PriceModel
-from app.training.trainer import ModelTrainer
+from app.services.dataset_builder import HistoricalDatasetBuilder
+from app.services.features_builder import FeatureBuilder
+from app.services.trainer_pipeline import ModelTrainer
+from app.utils.logger_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 class ForecastPipeline:
-    """End-to-end data, training, and forecasting pipeline."""
 
     def run(
-        self,
-        retrain: bool = False,
+        self, periods: int = settings.periods, retrain: bool = False
     ) -> pd.DataFrame:
-
-        # 1. Get/create + update raw data
         loader = EntsoeLoader()
         builder = HistoricalDatasetBuilder(loader)
         raw = builder.update_raw_data()
@@ -31,22 +31,18 @@ class ForecastPipeline:
         if raw.empty:
             raise ValueError("Raw dataset is empty.")
 
-        print(raw.columns)
-
-
-        # 2. Build processed/features dataset
         processor = FeatureBuilder()
-        processed = processor.build_processed_data(raw)
+        processed = processor.build_processed_data()
 
         if processed.empty:
             raise ValueError("Processed dataset is empty.")
 
-
-        # 3. Train models if necessary
         if retrain or not self.models_exist():
-            ModelTrainer.train_all(processed)
+            logger.info("Training models...")
+            ModelTrainer.train_all()
+        else:
+            logger.info("Using existing trained models.")
 
-        # 4. Load trained models
         forecast_service = Forecast(
             load_model=LoadModel.load(settings.load_model_pkl),
             wind_model=WindModel.load(settings.wind_model_pkl),
@@ -54,27 +50,44 @@ class ForecastPipeline:
             price_model=PriceModel.load(settings.price_model_pkl),
         )
 
-        # 5. Forecast
+        # Forecast
+        logger.info(
+            "Forecast started: periods=%d",
+            periods,
+        )
         result = forecast_service.recursive_forecast(
-            processed,
-            periods=settings.month_period,
+            periods=periods,
         ).dropna()
 
-        # 6. Save forecast
-        output_path = Path(settings.forecast_file)
+        logger.info(
+            "Forecast ended: %d rows generated",
+            len(result),
+        )
 
+        # Save forecast
+        output_path = Path(settings.forecast_file)
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,
         )
 
+        # Write the new forecast to a temporary file first
+        temp_output_path = output_path.with_suffix(".tmp.csv")
+
         result.to_csv(
-            output_path,
+            temp_output_path,
             index=False,
         )
 
-        return result
+        # Replace the old forecast with the new one
+        temp_output_path.replace(output_path)
+        logger.info(
+            "Forecast saved: %s (%d rows)",
+            output_path,
+            len(result),
+        )
 
+        return result
 
     @staticmethod
     def models_exist() -> bool:
@@ -91,11 +104,5 @@ class ForecastPipeline:
         )
 
 
-def main() -> None:
-    pipeline = ForecastPipeline()
-    pipeline.run()
-
-
 if __name__ == "__main__":
-    main()
-
+    ForecastPipeline().run()

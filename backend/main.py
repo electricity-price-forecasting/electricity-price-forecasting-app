@@ -18,6 +18,7 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "app" / "templates
 app.include_router(forecasts.router)
 app.include_router(drivers.router)
 
+
 @app.get("/")
 def home(request: Request):
     return templates.TemplateResponse(

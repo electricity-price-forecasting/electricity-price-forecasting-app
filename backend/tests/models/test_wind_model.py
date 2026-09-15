@@ -6,19 +6,18 @@ from app.models.wind_model import WindModel
 def make_history() -> pd.DataFrame:
     periods = 700
 
-    index = pd.date_range(
+    timestamps = pd.date_range(
         start="2026-01-01",
         periods=periods,
         freq="15min",
         tz="UTC",
-        name="timestamp",
     )
 
     return pd.DataFrame(
         {
-            "wind": [100.0 + i for i in range(periods)],
-        },
-        index=index,
+            "timestamp": timestamps,
+            "wind": [550.0 + i for i in range(periods)],
+        }
     )
 
 

@@ -6,19 +6,18 @@ from app.models.load_model import LoadModel
 def make_history() -> pd.DataFrame:
     periods = 700
 
-    index = pd.date_range(
+    timestamps = pd.date_range(
         start="2026-01-01",
         periods=periods,
         freq="15min",
         tz="UTC",
-        name="timestamp",
     )
 
     return pd.DataFrame(
         {
+            "timestamp": timestamps,
             "load": range(periods),
-        },
-        index=index,
+        }
     )
 
 

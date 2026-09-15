@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from app.config.settings import settings
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
 from app.models.solar_model import SolarModel
@@ -43,37 +44,51 @@ class Forecast:
     ) -> float:
         return self.price_model.predict_next(df, generation)
 
-    def recursive_forecast(self, df: pd.DataFrame, periods: int) -> pd.DataFrame:
+    def recursive_forecast(self, periods: int) -> pd.DataFrame:
+
+        processed_path = settings.processed_file
+        processed_df = pd.read_csv(processed_path)
 
         if periods <= 0:
             raise ValueError("periods must be > 0")
 
-        history, predictions = df.copy().sort_index(), []
+        processed_df["timestamp"] = pd.to_datetime(
+            processed_df["timestamp"],
+            utc=True,
+        )
+
+        history = processed_df.copy()
+        predictions = []
 
         for _ in range(periods):
             timestamp = next_timestamp(history)
+
             generation = self.predict_generation(history)
             price = self.predict_price(history, generation)
+
             predictions.append(
                 {
-                "timestamp": timestamp,
-                "load": generation.load,
-                "wind": generation.wind,
-                "solar": generation.solar,
-                "price": price
+                    "timestamp": timestamp,
+                    "load": generation.load,
+                    "wind": generation.wind,
+                    "solar": generation.solar,
+                    "price": price,
                 }
             )
+
             new_row = pd.DataFrame(
                 {
+                    "timestamp": [timestamp],
                     "load": [generation.load],
                     "wind": [generation.wind],
                     "solar": [generation.solar],
-                    "price": [price]},
-                index=pd.DatetimeIndex(
-                    [timestamp],
-                    name=history.index.name
-                ),
+                    "price": [price],
+                }
             )
 
-            history = pd.concat([history, new_row])
+            history = pd.concat(
+                [history, new_row],
+                ignore_index=True,
+            )
+
         return pd.DataFrame(predictions)

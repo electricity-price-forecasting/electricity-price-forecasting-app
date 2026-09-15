@@ -15,19 +15,31 @@ def mock_dashboard_data():
     now = pd.Timestamp.now(tz="Europe/Warsaw")
 
     # Create simple 2-row DataFrames to easily verify math
-    yesterday_df = pd.DataFrame({
-        "price": [50.0, 100.0],  # avg: 75.0, peak: 100.0, low: 50.0
-        "wind": [10.0, 10.0],  # avg: 10.0
-        "solar": [20.0, 20.0],  # avg: 20.0
-        "load": [100.0, 100.0]  # avg: 100.0
-    }, index=[now - pd.Timedelta(days=1), now - pd.Timedelta(hours=23)])
+    yesterday_df = pd.DataFrame(
+        {
+            "price": [50.0, 100.0],  # avg: 75.0, peak: 100.0, low: 50.0
+            "wind": [10.0, 10.0],  # avg: 10.0
+            "solar": [20.0, 20.0],  # avg: 20.0
+            "load": [100.0, 100.0],  # avg: 100.0
+        },
+        index=[now - pd.Timedelta(days=1), now - pd.Timedelta(hours=23)],
+    )
 
-    today_df = pd.DataFrame({
-        "price": [100.0, 200.0],  # avg: 150.0, peak: 200.0, low: 100.0
-        "wind": [20.0, 20.0],  # avg: 20.0 (+100%, trend should be DOWN for renewables)
-        "solar": [10.0, 10.0],  # avg: 10.0 (-50%, trend should be UP for renewables)
-        "load": [150.0, 150.0]  # avg: 150.0 (+50%, trend should be UP for load)
-    }, index=[now, now + pd.Timedelta(hours=1)])
+    today_df = pd.DataFrame(
+        {
+            "price": [100.0, 200.0],  # avg: 150.0, peak: 200.0, low: 100.0
+            "wind": [
+                20.0,
+                20.0,
+            ],  # avg: 20.0 (+100%, trend should be DOWN for renewables)
+            "solar": [
+                10.0,
+                10.0,
+            ],  # avg: 10.0 (-50%, trend should be UP for renewables)
+            "load": [150.0, 150.0],  # avg: 150.0 (+50%, trend should be UP for load)
+        },
+        index=[now, now + pd.Timedelta(hours=1)],
+    )
 
     return yesterday_df, today_df, now
 

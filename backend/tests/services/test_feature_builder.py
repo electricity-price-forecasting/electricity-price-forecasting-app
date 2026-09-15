@@ -5,12 +5,13 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from app.features.features_builder import FeatureBuilder
+from app.config.settings import settings
+from app.services.features_builder import FeatureBuilder
 
 
 class TestFeatureBuilder(unittest.TestCase):
 
-    @patch("app.features.features_builder.Features")
+    @patch("app.services.features_builder.Features")
     def test_build_all(self, mock_features):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
@@ -35,32 +36,37 @@ class TestFeatureBuilder(unittest.TestCase):
 
             transformed_df = pd.DataFrame(
                 {
+                    "timestamp": pd.to_datetime(
+                        ["2026-08-20 12:00"],
+                        utc=True,
+                    ),
                     "load": [100],
                     "wind": [20],
                     "solar": [50],
                     "price": [80],
                     "hour": [12],
-                },
-                index=pd.DatetimeIndex(
-                    ["2026-08-20 12:00"],
-                    name="timestamp",
-                ),
+                }
             )
 
             mock_features.return_value.transform_all.return_value = transformed_df
 
-            builder = FeatureBuilder()
+            mock_features.return_value.transform_all.return_value = transformed_df
 
-            result = builder.build(
-                input_path,
-                output_path,
-            )
+            with patch.object(settings, "raw_file", input_path), patch.object(
+                settings, "processed_file", output_path
+            ):
+                builder = FeatureBuilder()
+
+                result = builder.build_processed_data()
 
             mock_features.return_value.transform_all.assert_called_once()
 
+            # build_processed_data() returns timestamp as a normal column
+            expected_df = transformed_df
+
             pd.testing.assert_frame_equal(
                 result,
-                transformed_df,
+                expected_df,
             )
 
             self.assertTrue(output_path.exists())
@@ -68,10 +74,9 @@ class TestFeatureBuilder(unittest.TestCase):
             saved_df = pd.read_csv(
                 output_path,
                 parse_dates=["timestamp"],
-                index_col="timestamp",
             )
 
             pd.testing.assert_frame_equal(
                 saved_df,
-                transformed_df,
+                expected_df,
             )

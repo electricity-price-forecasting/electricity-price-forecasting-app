@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 import logging
 
@@ -8,15 +6,14 @@ from app.loader.entsoe_loader import EntsoeLoader
 from app.utils.logger_config import setup_logging
 from app.utils.time_utils import normalize_timezone, resample_to_15min
 from app.utils.cache import get_cached_or_fetch
-from app.utils.file_utils import save_csv
 
 setup_logging()
 logger = logging.getLogger(__name__)
 
 
 class HistoricalDatasetBuilder:
-    def __init__(self, loader: EntsoeLoader):
-        self.loader = loader
+    def __init__(self, loader=None):
+        self.loader = loader or EntsoeLoader()
 
     @staticmethod
     def merge_energy_data(
@@ -48,13 +45,12 @@ class HistoricalDatasetBuilder:
         all_months_data = []
 
         for dt in months:
-            refresh_month = refresh_cache or dt == months[-1]
             prices = get_cached_or_fetch(
                 fetch_func=self.loader.get_prices,
                 year=dt.year,
                 month=dt.month,
                 data_type="prices",
-                refresh=refresh_month,
+                refresh=refresh_cache,
             )
 
             load = get_cached_or_fetch(
@@ -62,7 +58,7 @@ class HistoricalDatasetBuilder:
                 year=dt.year,
                 month=dt.month,
                 data_type="load",
-                refresh=refresh_month,
+                refresh=refresh_cache,
             )
 
             renewable = get_cached_or_fetch(
@@ -70,7 +66,7 @@ class HistoricalDatasetBuilder:
                 year=dt.year,
                 month=dt.month,
                 data_type="renewable",
-                refresh=refresh_month,
+                refresh=refresh_cache,
             )
 
             prices = normalize_timezone(prices)
@@ -100,54 +96,73 @@ class HistoricalDatasetBuilder:
         end_ts = pd.to_datetime(end_date, utc=True)
         final_dataset = final_dataset.loc[start_ts:end_ts]
 
-
         return final_dataset.dropna()
 
     def update_raw_data(self) -> pd.DataFrame:
-        raw_path = Path(settings.raw_file)
+        raw_path = settings.raw_file
+
         if not raw_path.exists():
             return self.run()
+
         raw = pd.read_csv(raw_path)
-        raw["timestamp"] = pd.to_datetime(raw["timestamp"], utc=True)
+
+        raw["timestamp"] = pd.to_datetime(
+            raw["timestamp"],
+            utc=True,
+        )
+
         last_timestamp = raw["timestamp"].max()
-        now = pd.to_datetime("now", utc=True)
+        now = pd.Timestamp.now(tz="UTC")
 
         if last_timestamp >= now:
             return raw
 
         new_data = self.build_raw_data(
-            start_date=str(last_timestamp),
-            end_date=str(now),
-            refresh_cache=True,
+            start_date=last_timestamp.isoformat(),
+            end_date=now.isoformat(),
+            refresh_cache=False,
         )
 
         if new_data.empty:
             return raw
 
-        new_data.index = pd.to_datetime(new_data.index, utc=True)
+        new_data.index = pd.to_datetime(
+            new_data.index,
+            utc=True,
+        )
+
         new_data = new_data[new_data.index > last_timestamp]
 
         if new_data.empty:
             return raw
 
-        updated = (pd.concat([raw, new_data]).dropna()
-                   .drop_duplicates("timestamp", keep="last").sort_values("timestamp"))
+        updated = pd.concat([raw, new_data], ignore_index=True).dropna()
+        temp_path = raw_path.with_suffix(".tmp.csv")
 
-        save_csv(updated, settings.raw_file)
+        updated.to_csv(temp_path, index=False)
+
+        temp_path.replace(raw_path)
 
         return updated
-
 
     def run(self):
         today = pd.Timestamp.now(tz="UTC")
 
-        loader = EntsoeLoader()
-        builder = HistoricalDatasetBuilder(loader)
-
-        dataset = builder.build_raw_data(
+        dataset = self.build_raw_data(
             start_date=str(today - pd.DateOffset(years=2)),
             end_date=str(today),
         )
 
-        save_csv(dataset, settings.raw_file)
+        output = settings.raw_file
+        output.parent.mkdir(parents=True, exist_ok=True)
+
+        dataset.to_csv(
+            output,
+            index=True,
+            index_label="timestamp",
+        )
         return dataset
+
+
+if __name__ == "__main__":
+    HistoricalDatasetBuilder().update_raw_data()

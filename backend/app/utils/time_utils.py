@@ -36,6 +36,7 @@ def validate_dates(start, end):
         raise ValueError("Start date must be before end date")
     return start, end
 
+
 def is_nonworking_day(timestamp: pd.Timestamp) -> int:
     return int(timestamp.weekday() >= 5 or timestamp.date() in holidays.Poland())
 
@@ -45,6 +46,10 @@ def next_timestamp(df: pd.DataFrame) -> pd.Timestamp:
     Determines the next 15-minute timestamp based on the latest historical observation.
     """
     if df.empty:
-        raise ValueError("Historical DataFrame is empty. Cannot determine next timestamp.")
+        raise ValueError(
+            "Historical DataFrame is empty. Cannot determine next timestamp."
+        )
 
-    return df.index[-1] + pd.Timedelta(minutes=15)
+    last_timestamp = pd.to_datetime(df["timestamp"].iloc[-1])
+
+    return last_timestamp + pd.Timedelta(minutes=15)

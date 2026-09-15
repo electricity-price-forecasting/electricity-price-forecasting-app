@@ -56,4 +56,3 @@ class PriceModel(BaseModel):
         features_df = self.make_features(df, generation)
         predictions = self.estimator.predict(features_df)
         return float(predictions[-1])
-

@@ -7,19 +7,18 @@ from app.models.generation_model import GenerationModel
 def make_history() -> pd.DataFrame:
     periods = 700
 
-    index = pd.date_range(
+    timestamps = pd.date_range(
         start="2026-01-01",
         periods=periods,
         freq="15min",
         tz="UTC",
-        name="timestamp",
     )
 
     return pd.DataFrame(
         {
+            "timestamp": timestamps,
             "price": [50.0 + i for i in range(periods)],
-        },
-        index=index,
+        }
     )
 
 
@@ -44,6 +43,7 @@ def test_price_lags():
     assert features["price_lag_96"].iloc[0] == df["price"].iloc[-96]
     assert features["price_lag_192"].iloc[0] == df["price"].iloc[-192]
     assert features["price_lag_672"].iloc[0] == df["price"].iloc[-672]
+
 
 def test_price_generation_features():
     model = PriceModel()

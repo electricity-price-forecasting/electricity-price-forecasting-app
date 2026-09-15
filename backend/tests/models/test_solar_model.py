@@ -6,19 +6,18 @@ from app.models.solar_model import SolarModel
 def make_history() -> pd.DataFrame:
     periods = 700
 
-    index = pd.date_range(
+    timestamps = pd.date_range(
         start="2026-01-01",
         periods=periods,
         freq="15min",
         tz="UTC",
-        name="timestamp",
     )
 
     return pd.DataFrame(
         {
+            "timestamp": timestamps,
             "solar": [200.0 + i for i in range(periods)],
-        },
-        index=index,
+        }
     )
 
 

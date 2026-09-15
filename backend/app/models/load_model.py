@@ -12,12 +12,14 @@ class LoadModel(BaseModel):
     FEATURES = MODEL_FEATURES[TARGET]
 
     def __init__(self) -> None:
-        super().__init__(LGBMRegressor(
-            random_state=42,
-            n_estimators=300,
-            learning_rate=0.05,
-            max_depth=-1,
-        ))
+        super().__init__(
+            LGBMRegressor(
+                random_state=42,
+                n_estimators=300,
+                learning_rate=0.05,
+                max_depth=-1,
+            )
+        )
 
     def make_features(self, df: pd.DataFrame) -> pd.DataFrame:
         if len(df) < 672:
@@ -25,17 +27,19 @@ class LoadModel(BaseModel):
 
         next_ts = next_timestamp(df)
 
-        return pd.DataFrame({
-            "hour": [next_ts.hour],
-            "minute": [next_ts.minute],
-            "dayofweek": [next_ts.dayofweek],
-            "month": [next_ts.month],
-            "is_nonworking_day": [is_nonworking_day(next_ts)],
-            "load_lag_1": [df["load"].iloc[-1]],
-            "load_lag_4": [df["load"].iloc[-4]],
-            "load_lag_96": [df["load"].iloc[-96]],
-            "load_lag_672": [df["load"].iloc[-672]],
-        })[self.FEATURES]
+        return pd.DataFrame(
+            {
+                "hour": [next_ts.hour],
+                "minute": [next_ts.minute],
+                "dayofweek": [next_ts.dayofweek],
+                "month": [next_ts.month],
+                "is_nonworking_day": [is_nonworking_day(next_ts)],
+                "load_lag_1": [df["load"].iloc[-1]],
+                "load_lag_4": [df["load"].iloc[-4]],
+                "load_lag_96": [df["load"].iloc[-96]],
+                "load_lag_672": [df["load"].iloc[-672]],
+            }
+        )[self.FEATURES]
 
     def predict_next(self, df: pd.DataFrame) -> float:
         features_df = self.make_features(df)

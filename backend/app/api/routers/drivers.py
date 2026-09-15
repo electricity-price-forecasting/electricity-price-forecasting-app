@@ -1,18 +1,20 @@
 import pandas as pd
 from fastapi import APIRouter, HTTPException
 from app.config.settings import settings
-from app.services.forecast import ForecastPipeline
+from app.services.forecast_pipeline import ForecastPipeline
 from app.api.schemas.dashboard import (
     TodayHighlightsResponse,
     HighlightMetric,
     PriceDriversResponse,
-    PriceDriver
+    PriceDriver,
 )
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
 
-def calculate_trend(current: float, previous: float, inverse: bool = False) -> tuple[str, str]:
+def calculate_trend(
+    current: float, previous: float, inverse: bool = False
+) -> tuple[str, str]:
     """Calculates percentage change and returns the trend direction and formatted string."""
     if previous == 0 or pd.isna(previous):
         return "neutral", "0%"
@@ -35,9 +37,11 @@ def fetch_dashboard_data():
         pipeline = ForecastPipeline()
         forecast_df = pipeline.run()
 
-        if 'timestamp' in forecast_df.columns:
-            forecast_df['timestamp'] = pd.to_datetime(forecast_df['timestamp'], utc=True)
-            forecast_df.set_index('timestamp', inplace=True)
+        if "timestamp" in forecast_df.columns:
+            forecast_df["timestamp"] = pd.to_datetime(
+                forecast_df["timestamp"], utc=True
+            )
+            forecast_df.set_index("timestamp", inplace=True)
         else:
             forecast_df.index = pd.to_datetime(forecast_df.index, utc=True)
 
@@ -63,7 +67,12 @@ def fetch_dashboard_data():
         return yesterday_data, today_data, now
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process dashboard data: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500, detail=f"Failed to process dashboard data: {str(e)}"
+        )
 
 
 @router.get("/highlights", response_model=TodayHighlightsResponse)
@@ -80,7 +89,7 @@ def get_today_highlights():
     yesterday_low = yesterday_prices.min()
     today_low = today_prices.min()
 
-    current_hour = now.floor('h')
+    current_hour = now.floor("h")
     try:
         current_price = float(today_prices.loc[current_hour])
     except KeyError:
@@ -92,9 +101,15 @@ def get_today_highlights():
 
     return TodayHighlightsResponse(
         current_price=round(current_price, 2),
-        today_average=HighlightMetric(value=round(today_avg, 2), trend=avg_trend, change_text=avg_text),
-        today_peak=HighlightMetric(value=round(today_peak, 2), trend=peak_trend, change_text=peak_text),
-        today_low=HighlightMetric(value=round(today_low, 2), trend=low_trend, change_text=low_text)
+        today_average=HighlightMetric(
+            value=round(today_avg, 2), trend=avg_trend, change_text=avg_text
+        ),
+        today_peak=HighlightMetric(
+            value=round(today_peak, 2), trend=peak_trend, change_text=peak_text
+        ),
+        today_low=HighlightMetric(
+            value=round(today_low, 2), trend=low_trend, change_text=low_text
+        ),
     )
 
 
@@ -123,7 +138,7 @@ def get_price_drivers():
                 current_value=round(t_wind, 1),
                 unit="MW",
                 change_text=wind_text,
-                trend=wind_trend
+                trend=wind_trend,
             ),
             PriceDriver(
                 name="Solar Generation",
@@ -132,7 +147,7 @@ def get_price_drivers():
                 current_value=round(t_solar, 1),
                 unit="MW",
                 change_text=solar_text,
-                trend=solar_trend
+                trend=solar_trend,
             ),
             PriceDriver(
                 name="Electricity Demand",
@@ -141,7 +156,7 @@ def get_price_drivers():
                 current_value=round(t_load, 1),
                 unit="MW",
                 change_text=load_text,
-                trend=load_trend
-            )
-        ]
+                trend=load_trend,
+            ),
+        ],
     )

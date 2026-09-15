@@ -20,20 +20,27 @@ class DummyModel(BaseModel):
     FEATURES = ["feature_1", "feature_2"]
 
     def make_features(self, df):
-        return pd.DataFrame({
-            "feature_1": [1],
-            "feature_2": [2],
-        })
+        return pd.DataFrame(
+            {
+                "feature_1": [1],
+                "feature_2": [2],
+            }
+        )
+
+    def predict_next(self, features):
+        return 100.0
 
 
 def test_fit():
     model = DummyModel(FakeEstimator())
 
-    df = pd.DataFrame({
-        "feature_1": [1, 2, 3],
-        "feature_2": [4, 5, 6],
-        "target": [10, 20, 30],
-    })
+    df = pd.DataFrame(
+        {
+            "feature_1": [1, 2, 3],
+            "feature_2": [4, 5, 6],
+            "target": [10, 20, 30],
+        }
+    )
 
     model.fit(df)
 
@@ -43,10 +50,12 @@ def test_fit():
 def test_predict():
     model = DummyModel(FakeEstimator())
 
-    df = pd.DataFrame({
-        "feature_1": [1],
-        "feature_2": [2],
-    })
+    df = pd.DataFrame(
+        {
+            "feature_1": [1],
+            "feature_2": [2],
+        }
+    )
 
     predictions = model.predict(df)
 
@@ -56,22 +65,26 @@ def test_predict():
 def test_predict_next():
     model = DummyModel(FakeEstimator())
 
-    df = pd.DataFrame({
-        "feature_1": [1],
-        "feature_2": [2],
-    })
+    df = pd.DataFrame(
+        {
+            "feature_1": [1],
+            "feature_2": [2],
+        }
+    )
 
     prediction = model.predict_next(df)
 
-    assert prediction == 42.0
+    assert prediction == 100.0
 
 
 def test_missing_feature():
     model = DummyModel(FakeEstimator())
 
-    df = pd.DataFrame({
-        "feature_1": [1],
-    })
+    df = pd.DataFrame(
+        {
+            "feature_1": [1],
+        }
+    )
 
     with pytest.raises(ValueError, match="Missing required features"):
         model.predict(df)
@@ -80,10 +93,12 @@ def test_missing_feature():
 def test_missing_target():
     model = DummyModel(FakeEstimator())
 
-    df = pd.DataFrame({
-        "feature_1": [1],
-        "feature_2": [2],
-    })
+    df = pd.DataFrame(
+        {
+            "feature_1": [1],
+            "feature_2": [2],
+        }
+    )
 
     with pytest.raises(ValueError, match="Target column"):
         model.fit(df)
