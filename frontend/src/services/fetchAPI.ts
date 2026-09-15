@@ -1,6 +1,6 @@
 import type { DriversData, ForecastData, HighlightsData } from "../types/types";
 
-const BASE_URL = "http://localhost:5173/api";
+const BASE_URL = "/api";
 
 const DRIVERS = "/drivers.json";
 const HIGHLIGHTS = "/highlights.json";

@@ -19,6 +19,7 @@ export const App = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [forecastLoadedAt, setForecastLoadedAt] = useState<Date>(new Date());
   const [updatedAt, setUpdatedAt] = useState(new Date());
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export const App = () => {
 
         if (forecastResult.status === "fulfilled") {
           setForecast(forecastResult.value);
+          setForecastLoadedAt(new Date());
         }
       })
       .finally(() => {
@@ -95,7 +97,7 @@ export const App = () => {
                 )}
 
                 {forecast !== null ? (
-                  <Forecast rawData={forecast} />
+                  <Forecast rawData={forecast} loadedAt={forecastLoadedAt} />
                 ) : (
                   <div className="app__body__content__errorBox chart">
                     Unable to load Forecast

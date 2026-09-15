@@ -23,16 +23,16 @@ import classNames from "classnames";
 
 type Props = {
   rawData: ForecastData[];
+  loadedAt: Date;
 };
 
-export const Forecast: React.FC<Props> = ({ rawData }) => {
-  const actualPriceGradientId = useId();
+export const Forecast: React.FC<Props> = ({ rawData, loadedAt }) => {
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
   const [forecastInterval, setForecastInterval] = useState("60");
   const [period, setPeriod] = useState(ChartPeriods.day);
 
-  const [generatedTime] = useState(new Date());
+  const actualPriceGradientId = useId();
 
   const today = getForecastDate(new Date());
 
@@ -145,7 +145,7 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
         },
   );
 
-  const shortTime = generatedTime.toLocaleTimeString("en-GB", {
+  const shortTime = loadedAt.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
@@ -182,9 +182,11 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
             className="price-forecast__periods"
             role="group"
             aria-label="Forecast period"
-            data-active-index={
-              [ChartPeriods.day, ChartPeriods.week, ChartPeriods.month].indexOf(period)
-            }
+            data-active-index={[
+              ChartPeriods.day,
+              ChartPeriods.week,
+              ChartPeriods.month,
+            ].indexOf(period)}
           >
             <button
               type="button"
@@ -423,7 +425,7 @@ export const Forecast: React.FC<Props> = ({ rawData }) => {
       </div>
 
       <footer className="price-forecast__footer">
-        <span>Forecast generated today, {shortTime.toLocaleUpperCase()}</span>
+        <span>Forecast updated at, {shortTime.toLocaleUpperCase()}</span>
 
         <span>Data sources: ENTSO-E</span>
       </footer>
