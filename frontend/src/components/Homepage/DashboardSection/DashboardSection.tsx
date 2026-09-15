@@ -6,7 +6,7 @@ import background from "../../../assets/landing/desktop-background.png";
 export const DashboardSection = () => {
   return (
     <>
-      <section className="info-dashboard">
+      <section id="products" className="info-dashboard">
         <div className="info-dashboard__title-box">
           <h2 className="info-dashboard__title-box__title">
             Know what changed.

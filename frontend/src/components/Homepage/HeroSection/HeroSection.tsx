@@ -23,13 +23,13 @@ export const HeroSection = () => {
         </div>
 
         <nav className="hero-section__top__nav-box">
-          <a href="#" className="hero-section__top__nav-box__item">
+          <a href="#products" className="hero-section__top__nav-box__item">
             Products
           </a>
-          <a href="#" className="hero-section__top__nav-box__item">
+          <a href="#workflow" className="hero-section__top__nav-box__item">
             How it works
           </a>
-          <a href="#" className="hero-section__top__nav-box__item">
+          <a href="#market" className="hero-section__top__nav-box__item">
             Coverage
           </a>
         </nav>

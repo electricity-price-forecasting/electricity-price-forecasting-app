@@ -4,6 +4,7 @@ import { DashboardSection } from "./DashboardSection";
 import { WorkflowSection } from "./WorkflowSection";
 import { MarketSection } from "./MarketSection";
 import { ReviewSection } from "./ReviewsSection";
+import { Footer } from "./Footer";
 
 export const Homepage = () => {
   return (
@@ -24,6 +25,8 @@ export const Homepage = () => {
 
         <ReviewSection />
       </main>
+
+      <Footer />
     </div>
   );
 };

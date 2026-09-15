@@ -3,7 +3,7 @@ import "./MarketSection.scss";
 export const MarketSection = () => {
   return (
     <div className="container">
-      <section className="info-market">
+      <section id="market" className="info-market">
         <div className="info-market__title-box">
           <h2 className="info-market__title-box__title">Complex market data</h2>
         </div>

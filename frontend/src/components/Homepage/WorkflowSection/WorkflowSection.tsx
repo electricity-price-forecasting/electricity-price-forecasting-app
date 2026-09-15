@@ -3,7 +3,7 @@ import "./WorkflowSection.scss";
 export const WorkflowSection = () => {
   return (
     <div className="container">
-      <section className="info-workflow">
+      <section id="workflow" className="info-workflow">
         <div className="info-workflow__title-box">
           <h2 className="info-workflow__title-box__title">
             Everything required to move
