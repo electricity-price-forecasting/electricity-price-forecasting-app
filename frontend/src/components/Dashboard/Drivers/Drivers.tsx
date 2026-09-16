@@ -64,7 +64,7 @@ export const Drivers: React.FC<Props> = ({ drivers }) => {
           <div className="drivers__infoPanel__infoBox">
             <div className="drivers__infoPanel__infoBox__unitsBox">
               <p className="drivers__infoPanel__infoBox__unitsBox__text">
-                {element.previous_value} {element.unit}
+                {(element.previous_value / 1000).toFixed(2)} GW
               </p>
               <img
                 src={arrowIcon}
@@ -72,7 +72,7 @@ export const Drivers: React.FC<Props> = ({ drivers }) => {
                 className="drivers__infoPanel__infoBox__unitsBox__arrow"
               />
               <p className="drivers__infoPanel__infoBox__unitsBox__text">
-                {element.current_value} {element.unit}
+                {(element.current_value / 1000).toFixed(2)} GW
               </p>
             </div>
 

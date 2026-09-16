@@ -1,32 +1,32 @@
 {
-  "summary": "Prices are expected to fall by 12% tomorrow",
+  "summary": "Price drivers calculated based on daily averages",
   "drivers": [
     {
       "name": "Wind Generation",
-      "description": "Strong downward pressure",
-      "previous_value": 11,
-      "current_value": 21,
-      "unit": "GW",
-      "change_text": "-2.3%",
-      "trend": "up"
+      "description": "Wind output impact",
+      "previous_value": 1029.9,
+      "current_value": 2228,
+      "unit": "MW",
+      "change_text": "+116.3%",
+      "trend": "down"
     },
     {
       "name": "Solar Generation",
-      "description": "Downward pressure",
-      "previous_value": 12,
-      "current_value": 21,
-      "unit": "GW",
-      "change_text": "-2.1%",
+      "description": "Solar output impact",
+      "previous_value": 3622.3,
+      "current_value": 3171.6,
+      "unit": "MW",
+      "change_text": "-12.4%",
       "trend": "up"
     },
     {
       "name": "Electricity Demand",
-      "description": "Moderate demand",
-      "previous_value": 38,
-      "current_value": 42,
-      "unit": "GW",
-      "change_text": "+3€",
-      "trend": "down"
+      "description": "Grid load impact",
+      "previous_value": 18487.2,
+      "current_value": 19884.5,
+      "unit": "MW",
+      "change_text": "+7.6%",
+      "trend": "up"
     }
   ]
 }

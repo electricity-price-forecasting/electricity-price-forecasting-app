@@ -14,47 +14,45 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-  getForecastDate,
-  mapForecastToChartData,
-} from "../../../services/forecastToChartData";
+import { mapForecastToChartData } from "../../../services/forecastToChartData";
 import { ChartPeriods } from "../../../types/enums";
 import classNames from "classnames";
+import { Bars } from "react-loader-spinner";
 
 type Props = {
   rawData: ForecastData[];
   loadedAt: Date;
+  period: ChartPeriods;
+  onPeriodChange: (period: ChartPeriods) => void;
+  isLoading: boolean;
+  hasError: boolean;
+  onRetry: () => void;
 };
 
-export const Forecast: React.FC<Props> = ({ rawData, loadedAt }) => {
+export const Forecast: React.FC<Props> = ({
+  rawData,
+  loadedAt,
+  period,
+  onPeriodChange,
+  isLoading,
+  hasError,
+  onRetry,
+}) => {
   const [selectedPoint, setSelectedPoint] = useState<ChartPoint>();
 
   const [forecastInterval, setForecastInterval] = useState("60");
-  const [period, setPeriod] = useState(ChartPeriods.day);
 
   const actualPriceGradientId = useId();
 
-  const today = getForecastDate(new Date());
-
-  const [day, month, year] = today.split("/").map(Number);
-
-  const start = new Date(year, month - 1, day);
-  const end = new Date(start);
-
-  switch (period) {
-    case ChartPeriods.day:
-      end.setDate(end.getDate() + 1);
-      break;
-
-    case ChartPeriods.week:
-      end.setDate(end.getDate() + 7);
-      break;
-
-    case ChartPeriods.month:
-      start.setDate(start.getDate() - 14);
-      end.setDate(end.getDate() + 15);
-      break;
-  }
+  const horizonDays = {
+    [ChartPeriods.day]: 1,
+    [ChartPeriods.week]: 7,
+    [ChartPeriods.month]: 30,
+  };
+  const start = new Date(loadedAt);
+  const end = new Date(
+    start.getTime() + horizonDays[period] * 24 * 60 * 60 * 1000,
+  );
 
   const startMs = start.getTime();
   const endMs = end.getTime();
@@ -164,10 +162,11 @@ export const Forecast: React.FC<Props> = ({ rawData, loadedAt }) => {
     }
   };
 
-  const handlePeriodChange = (period: ChartPeriods) => {
+  const handlePeriodChange = (nextPeriod: ChartPeriods) => {
+    if (nextPeriod === period) return;
     setSelectedPoint(undefined);
     setForecastInterval("60");
-    setPeriod(period);
+    onPeriodChange(nextPeriod);
   };
 
   return (
@@ -248,184 +247,202 @@ export const Forecast: React.FC<Props> = ({ rawData, loadedAt }) => {
       <div className="price-forecast__unit">€/MWh</div>
 
       <div className="price-forecast__chart">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart
-            data={chartData}
-            accessibilityLayer={false}
-            onMouseMove={handleChartMouseMove}
-            margin={{
-              top: 20,
-              right: 18,
-              left: -12,
-              bottom: 5,
-            }}
-          >
-            <defs>
-              <linearGradient
-                id={actualPriceGradientId}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop offset="15%" stopColor="#494FDF" stopOpacity={0.22} />
-                <stop offset="100%" stopColor="#494FDF" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-
-            <CartesianGrid stroke="#ececf2" vertical={false} />
-
-            <XAxis
-              dataKey="timestampMs"
-              type="number"
-              scale="time"
-              domain={[startMs, endMs]}
-              ticks={xTicks}
-              tickFormatter={(timestamp: number) =>
-                axisFormatter.format(new Date(timestamp))
-              }
-              axisLine={false}
-              tickLine={false}
-              interval={0}
-              tick={({ x, y, payload }) => {
-                const isFirst = payload.value === xTicks[0];
-                const isLast = payload.value === xTicks[xTicks.length - 1];
-
-                return (
-                  <text
-                    x={x}
-                    y={y}
-                    dy={10}
-                    textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
-                    fill="#808080"
-                    fontSize={12}
-                  >
-                    {axisFormatter.format(new Date(payload.value))}
-                  </text>
-                );
+        {isLoading ? (
+          <div role="status">
+            <Bars color="#0047F4" />
+          </div>
+        ) : hasError ? (
+          <div className="errorBox" role="alert">
+            <p className="errorBox__text">Unable to load forecast</p>
+            <button className="errorBox__button" type="button" onClick={onRetry}>
+              Retry
+            </button>
+          </div>
+        ) : rawData.length === 0 ? (
+          <p>No forecast data available</p>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart
+              data={chartData}
+              accessibilityLayer={false}
+              onMouseMove={handleChartMouseMove}
+              margin={{
+                top: 20,
+                right: 18,
+                left: -12,
+                bottom: 5,
               }}
-            />
+            >
+              <defs>
+                <linearGradient
+                  id={actualPriceGradientId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="15%" stopColor="#494FDF" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="#494FDF" stopOpacity={0} />
+                </linearGradient>
+              </defs>
 
-            <YAxis
-              domain={[0, 200]}
-              ticks={[0, 40, 80, 120, 160, 200]}
-              axisLine={false}
-              tickLine={false}
-              tick={{
-                fill: "#808080",
-                fontSize: 12,
-              }}
-            />
+              <CartesianGrid stroke="#ececf2" vertical={false} />
 
-            <Tooltip content={<CustomTooltip />} cursor={false} />
+              <XAxis
+                dataKey="timestampMs"
+                type="number"
+                scale="time"
+                domain={[startMs, endMs]}
+                ticks={xTicks}
+                tickFormatter={(timestamp: number) =>
+                  axisFormatter.format(new Date(timestamp))
+                }
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                tick={({ x, y, payload }) => {
+                  const isFirst = payload.value === xTicks[0];
+                  const isLast = payload.value === xTicks[xTicks.length - 1];
 
-            <Area
-              type="linear"
-              dataKey="rangeBase"
-              stackId="range"
-              stroke="none"
-              fill="transparent"
-              activeDot={false}
-              legendType="none"
-              isAnimationActive={false}
-            />
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      dy={10}
+                      textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
+                      fill="#808080"
+                      fontSize={12}
+                    >
+                      {axisFormatter.format(new Date(payload.value))}
+                    </text>
+                  );
+                }}
+              />
 
-            <Area
-              type="linear"
-              dataKey="rangeDiff"
-              stackId="range"
-              stroke="none"
-              activeDot={false}
-              fill="#f0f0f8"
-              fillOpacity={0.9}
-              name="Prices range"
-              isAnimationActive={false}
-            />
+              <YAxis
+                domain={[0, 200]}
+                ticks={[0, 40, 80, 120, 160, 200]}
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fill: "#808080",
+                  fontSize: 12,
+                }}
+              />
 
-            <Area
-              type="linear"
-              dataKey="actual"
-              baseValue={0}
-              stroke="none"
-              fill={`url(#${actualPriceGradientId})`}
-              fillOpacity={1}
-              dot={false}
-              activeDot={false}
-              legendType="none"
-              tooltipType="none"
-              connectNulls={true}
-              isAnimationActive={false}
-            />
+              <Tooltip content={<CustomTooltip />} cursor={false} />
 
-            <ReferenceLine
-              y={selectedPoint?.actual ?? selectedPoint?.forecast}
-              stroke="#9d9da7"
-              strokeDasharray="6 6"
-            />
+              <Area
+                type="linear"
+                dataKey="rangeBase"
+                stackId="range"
+                stroke="none"
+                fill="transparent"
+                activeDot={false}
+                legendType="none"
+                isAnimationActive={false}
+              />
 
-            <ReferenceLine
-              x={
-                visibleData.find((point) => point.slot === selectedPoint?.slot)
-                  ?.timestampMs
-              }
-              stroke="#b8b8c0"
-              strokeDasharray="6 6"
-            />
+              <Area
+                type="linear"
+                dataKey="rangeDiff"
+                stackId="range"
+                stroke="none"
+                activeDot={false}
+                fill="#f0f0f8"
+                fillOpacity={0.9}
+                name="Prices range"
+                isAnimationActive={false}
+              />
 
-            <Line
-              type="linear"
-              dataKey="actual"
-              stroke="#6E55FF"
-              strokeWidth={1.2}
-              dot={false}
-              activeDot={{
-                r: 4,
-                fill: "#EAF5FF",
-                stroke: "#007DFF",
-                strokeWidth: 1,
-              }}
-              name="Actual price"
-              connectNulls={true}
-              isAnimationActive={false}
-            />
+              <Area
+                type="linear"
+                dataKey="actual"
+                baseValue={0}
+                stroke="none"
+                fill={`url(#${actualPriceGradientId})`}
+                fillOpacity={1}
+                dot={false}
+                activeDot={false}
+                legendType="none"
+                tooltipType="none"
+                connectNulls={true}
+                isAnimationActive={false}
+              />
 
-            <Line
-              type="linear"
-              dataKey="forecast"
-              stroke="#007DFF"
-              strokeWidth={1.2}
-              strokeDasharray="3 3"
-              dot={false}
-              activeDot={{
-                r: 4,
-                fill: "#EAF5FF",
-                stroke: "#007DFF",
-                strokeWidth: 1,
-              }}
-              name="Forecast"
-              connectNulls={true}
-              isAnimationActive={false}
-            />
+              <ReferenceLine
+                y={selectedPoint?.actual ?? selectedPoint?.forecast}
+                stroke="#9d9da7"
+                strokeDasharray="6 6"
+              />
 
-            <Legend
-              verticalAlign="bottom"
-              height={44}
-              iconType="plainline"
-              wrapperStyle={{
-                fontSize: "12px",
-                color: "#777780",
-                paddingTop: "16px",
-              }}
-              labelStyle={{
-                color: "#535353",
-              }}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+              <ReferenceLine
+                x={
+                  visibleData.find(
+                    (point) => point.slot === selectedPoint?.slot,
+                  )?.timestampMs
+                }
+                stroke="#b8b8c0"
+                strokeDasharray="6 6"
+              />
+
+              <Line
+                type="linear"
+                dataKey="actual"
+                stroke="#6E55FF"
+                strokeWidth={1.2}
+                dot={false}
+                activeDot={{
+                  r: 4,
+                  fill: "#EAF5FF",
+                  stroke: "#007DFF",
+                  strokeWidth: 1,
+                }}
+                name="Actual price"
+                connectNulls={true}
+                isAnimationActive={false}
+              />
+
+              <Line
+                type="linear"
+                dataKey="forecast"
+                stroke="#007DFF"
+                strokeWidth={1.2}
+                strokeDasharray="3 3"
+                dot={false}
+                activeDot={{
+                  r: 4,
+                  fill: "#EAF5FF",
+                  stroke: "#007DFF",
+                  strokeWidth: 1,
+                }}
+                name="Forecast"
+                connectNulls={true}
+                isAnimationActive={false}
+              />
+
+              <Legend
+                verticalAlign="bottom"
+                height={44}
+                iconType="plainline"
+                wrapperStyle={{
+                  fontSize: "12px",
+                  color: "#777780",
+                  paddingTop: "16px",
+                }}
+                labelStyle={{
+                  color: "#535353",
+                }}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       <footer className="price-forecast__footer">
-        <span>Forecast updated at, {shortTime.toLocaleUpperCase()}</span>
+        {!isLoading && !hasError && rawData.length > 0 && (
+          <span>Forecast loaded at, {shortTime.toUpperCase()}</span>
+        )}
 
         <span>Data sources: ENTSO-E</span>
       </footer>

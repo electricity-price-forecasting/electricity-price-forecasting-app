@@ -15,32 +15,82 @@ import type {
   HighlightsData,
 } from "../../types/types";
 import { Bars } from "react-loader-spinner";
+import { ChartPeriods } from "../../types/enums";
+import type { ForecastPeriod } from "../../services/fetchAPI";
 // import { Sidebar } from "./Sidebar";
+
+const apiPeriods: Record<ChartPeriods, ForecastPeriod> = {
+  [ChartPeriods.day]: "24h",
+  [ChartPeriods.week]: "1w",
+  [ChartPeriods.month]: "1m",
+};
+
+type ForecastCacheEntry = {
+  data: ForecastData[];
+  loadedAt: Date;
+};
 
 export const Dashboard = () => {
   const [highlights, setHighlights] = useState<HighlightsData | null>(null);
   const [drivers, setDrivers] = useState<DriversData | null>(null);
-  const [forecast, setForecast] = useState<ForecastData[] | null>(null);
+  const [period, setPeriod] = useState(ChartPeriods.day);
+  const [forecastRetry, setForecastRetry] = useState(0);
+  const [forecastCache, setForecastCache] = useState<
+    Partial<Record<ChartPeriods, ForecastCacheEntry>>
+  >({});
+  const [forecastError, setForecastError] = useState<{
+    period: ChartPeriods;
+    retry: number;
+  } | null>(null);
+  const cachedForecast = forecastCache[period];
+  const hasForecastError =
+    forecastError?.period === period && forecastError.retry === forecastRetry;
+  const forecastLoading = !cachedForecast && !hasForecastError;
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [forecastLoadedAt, setForecastLoadedAt] = useState<Date>(new Date());
   const [updatedAt, setUpdatedAt] = useState(new Date());
 
   useEffect(() => {
-    Promise.allSettled([getHighlights(), getDrivers(), getForecast()])
-      .then(([highlightsResult, driversResult, forecastResult]) => {
+    if (cachedForecast) return;
+
+    const controller = new AbortController();
+    let active = true;
+
+    getForecast(apiPeriods[period], controller.signal)
+      .then((data) => {
+        if (!active) return;
+        setForecastCache((cache) => ({
+          ...cache,
+          [period]: {
+            data,
+            loadedAt: new Date(),
+          },
+        }));
+      })
+      .catch(() => {
+        if (!active) return;
+        setForecastError({
+          period,
+          retry: forecastRetry,
+        });
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [period, forecastRetry, cachedForecast]);
+
+  useEffect(() => {
+    Promise.allSettled([getHighlights(), getDrivers()])
+      .then(([highlightsResult, driversResult]) => {
         if (highlightsResult.status === "fulfilled") {
           setHighlights(highlightsResult.value);
         }
 
         if (driversResult.status === "fulfilled") {
           setDrivers(driversResult.value);
-        }
-
-        if (forecastResult.status === "fulfilled") {
-          setForecast(forecastResult.value);
-          setForecastLoadedAt(new Date());
         }
       })
       .finally(() => {
@@ -77,7 +127,7 @@ export const Dashboard = () => {
                 onClick={() => reload()}
                 className="app__body__content__errorBox__reloadBtn"
               >
-                Reload
+                Retry
               </button>
             </div>
           )}
@@ -91,24 +141,23 @@ export const Dashboard = () => {
                 onClick={() => reload()}
                 className="app__body__content__errorBox__reloadBtn"
               >
-                Reload
+                Retry
               </button>
             </div>
           )}
 
-          {forecast !== null ? (
-            <Forecast rawData={forecast} loadedAt={forecastLoadedAt} />
-          ) : (
-            <div className="app__body__content__errorBox chart">
-              Unable to load Forecast
-              <button
-                onClick={() => reload()}
-                className="app__body__content__errorBox__reloadBtn"
-              >
-                Reload
-              </button>
-            </div>
-          )}
+          <Forecast
+            rawData={cachedForecast?.data ?? []}
+            loadedAt={cachedForecast?.loadedAt ?? updatedAt}
+            period={period}
+            onPeriodChange={(nextPeriod) => {
+              setPeriod(nextPeriod);
+              setForecastRetry((value) => value + 1);
+            }}
+            isLoading={forecastLoading}
+            hasError={!cachedForecast && hasForecastError}
+            onRetry={() => setForecastRetry((value) => value + 1)}
+          />
         </main>
       </div>
     </div>

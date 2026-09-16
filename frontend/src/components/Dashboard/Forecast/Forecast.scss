@@ -211,6 +211,10 @@
   }
 
   &__chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     width: 100%;
     height: 340px;
     margin-top: 16px;
@@ -261,5 +265,30 @@
         font-size: 12px;
       }
     }
+  }
+}
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  &__button {
+    border: 1px solid $mainBorderColor;
+    border-radius: $borderRadius;
+
+    background-color: $secondaryBackgroundColor;
+
+    width: 216px;
+    height: 42px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.3s ease;
+
+    cursor: pointer;
   }
 }

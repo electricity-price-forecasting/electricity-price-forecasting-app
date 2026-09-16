@@ -1,10 +1,12 @@
 import type { DriversData, ForecastData, HighlightsData } from "../types/types";
 
-const BASE_URL = "/api";
+const BASE_URL = "";
 
-const DRIVERS = "/drivers.json";
-const HIGHLIGHTS = "/highlights.json";
-const FORECAST = "/forecast.json";
+const DRIVERS = "/api/dashboard/drivers";
+const HIGHLIGHTS = "/api/dashboard/highlights";
+const FORECAST = "/forecast";
+
+export type ForecastPeriod = "24h" | "1w" | "1m";
 
 export function getDrivers(): Promise<DriversData> {
   return fetch(BASE_URL + DRIVERS).then((response) => {
@@ -26,12 +28,18 @@ export function getHighlights(): Promise<HighlightsData> {
   });
 }
 
-export function getForecast(): Promise<ForecastData[]> {
-  return fetch(BASE_URL + FORECAST).then((response) => {
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
+export async function getForecast(
+  period: ForecastPeriod = "24h",
+  signal?: AbortSignal,
+): Promise<ForecastData[]> {
+  const response = await fetch(`${BASE_URL}${FORECAST}?period=${period}`, {
+    signal,
   });
+
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.forecast;
 }
