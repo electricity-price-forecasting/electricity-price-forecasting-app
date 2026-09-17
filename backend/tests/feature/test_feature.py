@@ -17,8 +17,8 @@ class TestFeatures(unittest.TestCase):
 
     def test_add_time_features(self):
         df = pd.DataFrame(
-            {"price": [100]}, index=pd.to_datetime(["2026-08-20 14:30"], utc=True)
-        )
+            {"timestamp": pd.to_datetime(["2026-08-20 14:30"], utc=True),
+             "price": [100]})
         result = self.features.add_time_features(df)
         self.assertEqual(result["minute"].iloc[0], 30)
         self.assertEqual(result["hour"].iloc[0], 14)
@@ -59,17 +59,17 @@ class TestFeatures(unittest.TestCase):
     @patch("app.features.features.sun_elevation")
     def test_transform_all(self, mock_sun_elevation):
         mock_sun_elevation.return_value = 30.0
-        index = pd.date_range("2026-08-01", periods=700, freq="15min", tz="UTC")
+        timestamps = pd.date_range("2026-08-01", periods=700, freq="15min", tz="UTC")
         df = pd.DataFrame(
             {
+                "timestamp": timestamps,
                 "price": range(700),
                 "load": range(1000, 1700),
                 "wind": range(2000, 2700),
                 "solar": range(3000, 3700),
             },
-            index=index,
         )
-
+        df = df.set_index("timestamp", drop = False)
         result = self.features.transform_all(df)
 
         for column in [

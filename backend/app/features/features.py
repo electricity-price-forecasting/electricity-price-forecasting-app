@@ -23,11 +23,12 @@ class Features:
 
     def add_time_features(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-        df["minute"] = df.index.minute
-        df["hour"] = df.index.hour
-        df["dayofweek"] = df.index.dayofweek
-        df["month"] = df.index.month
-        df["dayofyear"] = df.index.dayofyear
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df["minute"] = df["timestamp"].dt.minute
+        df["hour"] = df["timestamp"].dt.hour
+        df["dayofweek"] = df["timestamp"].dt.dayofweek
+        df["month"] = df["timestamp"].dt.month
+        df["dayofyear"] = df["timestamp"].dt.dayofyear
         return df
 
     def add_holiday_feature(self, df: pd.DataFrame) -> pd.DataFrame:

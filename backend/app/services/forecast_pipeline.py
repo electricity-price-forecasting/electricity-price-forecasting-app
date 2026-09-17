@@ -57,7 +57,7 @@ class ForecastPipeline:
         )
         result = forecast_service.recursive_forecast(
             periods=periods,
-        ).dropna()
+        )
 
         logger.info(
             "Forecast ended: %d rows generated",
@@ -65,7 +65,7 @@ class ForecastPipeline:
         )
 
         # Save forecast
-        output_path = Path(settings.forecast_file)
+        output_path = settings.forecast_file
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,

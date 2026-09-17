@@ -132,11 +132,19 @@ class HistoricalDatasetBuilder:
         )
 
         new_data = new_data[new_data.index > last_timestamp]
+        new_data = new_data.reset_index()
+        new_data = new_data.rename(columns={"index": "timestamp"})
 
         if new_data.empty:
             return raw
 
-        updated = pd.concat([raw, new_data], ignore_index=True).dropna()
+        updated = pd.concat([raw, new_data], ignore_index=True)
+        updated = (
+            updated
+            .drop_duplicates(subset="timestamp", keep="last")
+            .sort_values("timestamp")
+            .reset_index(drop=True)
+        )
         temp_path = raw_path.with_suffix(".tmp.csv")
 
         updated.to_csv(temp_path, index=False)
