@@ -17,6 +17,7 @@ import type {
 import { Bars } from "react-loader-spinner";
 import { ChartPeriods } from "../../types/enums";
 import type { ForecastPeriod } from "../../services/fetchAPI";
+import { Skeleton } from "@mui/material";
 // import { Sidebar } from "./Sidebar";
 
 const apiPeriods: Record<ChartPeriods, ForecastPeriod> = {
@@ -35,6 +36,7 @@ export const Dashboard = () => {
   const [drivers, setDrivers] = useState<DriversData | null>(null);
   const [period, setPeriod] = useState(ChartPeriods.day);
   const [forecastRetry, setForecastRetry] = useState(0);
+  const [initialForecastSettled, setInitialForecastSettled] = useState(false);
   const [forecastCache, setForecastCache] = useState<
     Partial<Record<ChartPeriods, ForecastCacheEntry>>
   >({});
@@ -42,12 +44,16 @@ export const Dashboard = () => {
     period: ChartPeriods;
     retry: number;
   } | null>(null);
+
   const cachedForecast = forecastCache[period];
+
   const hasForecastError =
     forecastError?.period === period && forecastError.retry === forecastRetry;
+
   const forecastLoading = !cachedForecast && !hasForecastError;
 
   const [isLoading, setIsLoading] = useState(true);
+  const dashboardLoading = isLoading || !initialForecastSettled;
 
   const [updatedAt, setUpdatedAt] = useState(new Date());
 
@@ -67,6 +73,7 @@ export const Dashboard = () => {
             loadedAt: new Date(),
           },
         }));
+        setInitialForecastSettled(true);
       })
       .catch(() => {
         if (!active) return;
@@ -74,6 +81,7 @@ export const Dashboard = () => {
           period,
           retry: forecastRetry,
         });
+        setInitialForecastSettled(true);
       });
 
     return () => {
@@ -94,7 +102,7 @@ export const Dashboard = () => {
         }
       })
       .finally(() => {
-        setTimeout(() => setIsLoading(false), 2000);
+        setIsLoading(false);
       });
   }, [updatedAt]);
 
@@ -107,7 +115,7 @@ export const Dashboard = () => {
     <div className="app">
       <Header />
 
-      {isLoading && (
+      {dashboardLoading && (
         <div className="app__loader-overlay">
           <div className="app__loader-overlay__loader">
             <Bars color="#0047F4" />
@@ -118,7 +126,15 @@ export const Dashboard = () => {
         {/*<Sidebar />*/}
 
         <main className="app__body__content">
-          {highlights !== null ? (
+          {dashboardLoading ? (
+            <div className="app__body__content__loading-box">
+              <Skeleton variant="rounded" height={38} width={250} />
+              <Skeleton variant="rounded" height={75} width={680} />
+              <Skeleton variant="rounded" height={60} width={680} />
+              <Skeleton variant="rounded" height={60} width={680} />
+              <Skeleton variant="rounded" height={60} width={680} />
+            </div>
+          ) : highlights !== null ? (
             <Highlights highlights={highlights} />
           ) : (
             <div className="app__body__content__errorBox highlight">
@@ -132,7 +148,16 @@ export const Dashboard = () => {
             </div>
           )}
 
-          {drivers !== null ? (
+          {dashboardLoading ? (
+            <div className="app__body__content__loading-box">
+              <Skeleton variant="rounded" height={38} width={250} />
+              <Skeleton variant="rounded" height={28} width={400} />
+              <Skeleton variant="rounded" height={50} width={680} />
+              <Skeleton variant="rounded" height={50} width={680} />
+              <Skeleton variant="rounded" height={50} width={680} />
+              <Skeleton variant="rounded" height={50} width={680} />
+            </div>
+          ) : drivers !== null ? (
             <Drivers drivers={drivers} />
           ) : (
             <div className="app__body__content__errorBox price-drivers">
@@ -146,18 +171,33 @@ export const Dashboard = () => {
             </div>
           )}
 
-          <Forecast
-            rawData={cachedForecast?.data ?? []}
-            loadedAt={cachedForecast?.loadedAt ?? updatedAt}
-            period={period}
-            onPeriodChange={(nextPeriod) => {
-              setPeriod(nextPeriod);
-              setForecastRetry((value) => value + 1);
-            }}
-            isLoading={forecastLoading}
-            hasError={!cachedForecast && hasForecastError}
-            onRetry={() => setForecastRetry((value) => value + 1)}
-          />
+          {dashboardLoading ? (
+            <div
+              className="app__body__content__loading-box chart"
+              role="status"
+              aria-label="Loading Price Forecast"
+            >
+              <div className="price-forecast__header">
+                <Skeleton variant="rounded" height={38} width="25%" />
+                <Skeleton variant="rounded" height={38} width="20%" />
+              </div>
+              <Skeleton variant="rounded" height={20} width={60} />
+              <Skeleton variant="rounded" height={320} width="100%" />
+            </div>
+          ) : (
+            <Forecast
+              rawData={cachedForecast?.data ?? []}
+              loadedAt={cachedForecast?.loadedAt ?? updatedAt}
+              period={period}
+              onPeriodChange={(nextPeriod) => {
+                setPeriod(nextPeriod);
+                setForecastRetry((value) => value + 1);
+              }}
+              isLoading={forecastLoading}
+              hasError={!cachedForecast && hasForecastError}
+              onRetry={() => setForecastRetry((value) => value + 1)}
+            />
+          )}
         </main>
       </div>
     </div>
