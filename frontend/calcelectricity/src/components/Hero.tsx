@@ -1,14 +1,14 @@
 function Hero() {
   return (
     <section className="hero">
-      <div className="hero-eyebrow">
-        European electricity
+      {/* <div className="hero-eyebrow">
+        European electricity-price intelligence
         <br />
         intelligence
-      </div>
+      </div> */}
 
       <div className="hero-decorative-text">
-        CalcElectricity
+      European electricity price intelligence
       </div>
 
       <div className="hero-content">
@@ -25,9 +25,7 @@ function Hero() {
           expenses in seconds.
         </p>
 
-        <a href="#calculator" className="hero-button">
-        Open dashboard
-        </a>
+
       </div>
     </section>
   );

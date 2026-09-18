@@ -13,7 +13,9 @@ export default function ProductShowcase() {
           ctaLabel="Open dashboard >"
           ctaHref="#features"
         />
-
+        <a href="#calculator" className="hero-button">
+        Open dashboard
+        </a>
         <div className="showcase__frame">
           <img
             src={dashboardImg}

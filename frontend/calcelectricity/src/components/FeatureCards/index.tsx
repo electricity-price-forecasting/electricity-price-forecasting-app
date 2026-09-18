@@ -8,29 +8,30 @@ interface CardItem {
 }
 
 const CARDS: CardItem[] = [
-  { icon: '🔌', title: 'Джерела даних', text: 'Понад 30 бірж та операторів мереж в одному потоці' },
-  { icon: '📊', title: 'Аналітика попиту', text: 'Візуалізація попиту й генерації в реальному часі' },
-  { icon: '🔔', title: 'Розумні сповіщення', text: 'Миттєві сповіщення про аномалії та пікові ціни' },
+  { icon: '🔌', title: 'Connected data sources', text: 'Over 30 exchanges and network operators in a single stream' },
+  { icon: '📊', title: 'Role-based workspaces', text: 'Візуалізація попиту й генерації в реальному часі' },
+  { icon: '🔔', title: 'Live forecast revisions', text: 'Миттєві сповіщення про аномалії та пікові ціни' },
 ]
 
 /** Проста лінія-графік намальована SVG-полілінією — без зайвих бібліотек */
 function TrendGraphic() {
   return (
-    <svg className="trend-graphic" viewBox="0 0 600 160" preserveAspectRatio="none" aria-hidden="true">
-      <polyline
-        points="0,120 60,110 120,130 180,90 240,100 300,60 360,70 420,40 480,55 540,25 600,35"
-        fill="none"
-        stroke="var(--color-primary)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <polygon
-        points="0,120 60,110 120,130 180,90 240,100 300,60 360,70 420,40 480,55 540,25 600,35 600,160 0,160"
-        fill="var(--color-primary)"
-        opacity="0.08"
-      />
-    </svg>
+    // <svg className="trend-graphic" viewBox="0 0 600 160" preserveAspectRatio="none" aria-hidden="true">
+    //   <polyline
+    //     points="0,120 60,110 120,130 180,90 240,100 300,60 360,70 420,40 480,55 540,25 600,35"
+    //     fill="none"
+    //     stroke="var(--color-primary)"
+    //     strokeWidth="3"
+    //     strokeLinecap="round"
+    //     strokeLinejoin="round"
+    //   />
+    //   <polygon
+    //     points="0,120 60,110 120,130 180,90 240,100 300,60 360,70 420,40 480,55 540,25 600,35 600,160 0,160"
+    //     fill="var(--color-primary)"
+    //     opacity="0.08"
+    //   />
+    // </svg>
+    <img src="./src/assets/electricity-flow-dashboard 1.png"/>
   )
 }
 
@@ -59,8 +60,8 @@ export default function FeatureCards() {
         <div className="feature-cards__wide">
           <TrendGraphic />
           <div className="feature-cards__wide-caption">
-            <h3>Прогноз на 72 години</h3>
-            <p>Оновлюється щогодини на основі свіжих біржових даних</p>
+            <h3>Electricity-price dashboard</h3>
+            {/* <p>Renews every hour based on fresh stocks datas</p> */}
           </div>
         </div>
       </div>

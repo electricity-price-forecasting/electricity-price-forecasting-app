@@ -8,10 +8,10 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: 'Product', href: '#product' },
-  { label: 'Opportunities', href: '#features' },
-  { label: 'Taxes', href: '#insights' },
-  { label: 'Company', href: '#footer' },
+  { label: 'Products', href: '#product' },
+  { label: 'How it works', href: '#features' },
+  { label: 'Coverage', href: '#insights' },
+  // { label: 'Company', href: '#footer' },
 ]
 
 export default function Header() {
@@ -20,6 +20,7 @@ export default function Header() {
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8)
+    onScroll()
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])

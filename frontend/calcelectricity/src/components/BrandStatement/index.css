@@ -6,9 +6,13 @@
 }
 
 .brand-statement__kicker {
+  text-align: center;
+  align-items: center;
+
   font-size: 15px;
   font-weight: 500;
   color: var(--color-ink-soft);
+
 }
 
 .brand-statement__word {
@@ -21,6 +25,7 @@
   color: transparent;
   line-height: 1;
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .brand-statement__text {

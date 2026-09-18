@@ -79,7 +79,7 @@ import Testimonials from './components/Testimonials/index'
 // import CtaBanner from './components/CtaBanner/index'
 import Footer from './components/Footer/index'
 
-function App()  {
+function App() {
   return (
     <>
       <Header />
