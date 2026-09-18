@@ -1,9 +1,12 @@
+from zoneinfo import ZoneInfo
+
 import pandas as pd
 from fastapi import APIRouter, HTTPException
 
 from app.services.forecast_pipeline import ForecastPipeline
 
 router = APIRouter(tags=["Forecast"])
+WARSAW_TZ = ZoneInfo("Europe/Warsaw")
 
 
 @router.get("/forecast")
@@ -43,16 +46,18 @@ def get_forecast(period: str = "24h"):
             utc=True,
         )
 
-        now = pd.Timestamp.now(tz="UTC")
-        end = now + duration
+        start = pd.Timestamp.now(WARSAW_TZ).normalize()
+        end = start + duration
+
+        forecast_df["timestamp"] = forecast_df["timestamp"].dt.tz_convert(WARSAW_TZ)
 
         data = forecast_df[
-            (forecast_df["timestamp"] >= now) & (forecast_df["timestamp"] <= end)
+            (forecast_df["timestamp"] >= start) & (forecast_df["timestamp"] <= end)
         ]
 
         return {
             "period": period,
-            "timezone": "UTC",
+            "timezone": "Europe/Warsaw",
             "forecast": [
                 {
                     "timestamp": row["timestamp"].isoformat(),
