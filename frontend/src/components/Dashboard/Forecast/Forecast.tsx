@@ -44,23 +44,30 @@ export const Forecast: React.FC<Props> = ({
 
   const actualPriceGradientId = useId();
 
-  const horizonDays = {
-    [ChartPeriods.day]: 1,
-    [ChartPeriods.week]: 7,
-    [ChartPeriods.month]: 30,
-  };
-  const start = new Date(loadedAt);
-  const end = new Date(
-    start.getTime() + horizonDays[period] * 24 * 60 * 60 * 1000,
-  );
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+
+  switch (period) {
+    case ChartPeriods.day:
+      end.setDate(end.getDate() + 1);
+      break;
+
+    case ChartPeriods.week:
+      // Monday is the first day; the range ends at Sunday midnight.
+      start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+      end.setTime(start.getTime());
+      end.setDate(end.getDate() + 6);
+      break;
+
+    case ChartPeriods.month:
+      start.setDate(start.getDate() - 14);
+      end.setDate(end.getDate() + 14);
+      break;
+  }
 
   const startMs = start.getTime();
   const endMs = end.getTime();
-
-  const includeEndPoint =
-    period === ChartPeriods.day ||
-    period === ChartPeriods.week ||
-    (period === ChartPeriods.month && forecastInterval === "day");
 
   const transformedData = mapForecastToChartData(rawData ?? []);
 
@@ -68,16 +75,13 @@ export const Forecast: React.FC<Props> = ({
     .filter((point) => {
       const timestamp = new Date(point.timestamp).getTime();
 
-      return (
-        timestamp >= startMs &&
-        (timestamp < endMs || (includeEndPoint && timestamp === endMs))
-      );
+      return timestamp >= startMs && timestamp <= endMs;
     })
     .filter((point) => {
       const date = new Date(point.timestamp);
       const timestamp = date.getTime();
 
-      if (includeEndPoint && timestamp === endMs) {
+      if (timestamp === endMs) {
         return true;
       }
 
@@ -125,9 +129,7 @@ export const Forecast: React.FC<Props> = ({
     }
   }
 
-  if (period === ChartPeriods.day || period === ChartPeriods.week) {
-    xTicks.push(endMs);
-  }
+  xTicks.push(endMs);
 
   const axisFormatter = new Intl.DateTimeFormat(
     "en-GB",

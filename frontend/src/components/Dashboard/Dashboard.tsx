@@ -128,11 +128,11 @@ export const Dashboard = () => {
         <main className="app__body__content">
           {dashboardLoading ? (
             <div className="app__body__content__loading-box">
-              <Skeleton variant="rounded" height={38} width={250} />
-              <Skeleton variant="rounded" height={75} width={680} />
-              <Skeleton variant="rounded" height={60} width={680} />
-              <Skeleton variant="rounded" height={60} width={680} />
-              <Skeleton variant="rounded" height={60} width={680} />
+              <Skeleton variant="rounded" height={38} width="25%" />
+              <Skeleton variant="rounded" height={75} width="100%" />
+              <Skeleton variant="rounded" height={60} width="100%" />
+              <Skeleton variant="rounded" height={60} width="100%" />
+              <Skeleton variant="rounded" height={60} width="100%" />
             </div>
           ) : highlights !== null ? (
             <Highlights highlights={highlights} />
@@ -150,12 +150,12 @@ export const Dashboard = () => {
 
           {dashboardLoading ? (
             <div className="app__body__content__loading-box">
-              <Skeleton variant="rounded" height={38} width={250} />
-              <Skeleton variant="rounded" height={28} width={400} />
-              <Skeleton variant="rounded" height={50} width={680} />
-              <Skeleton variant="rounded" height={50} width={680} />
-              <Skeleton variant="rounded" height={50} width={680} />
-              <Skeleton variant="rounded" height={50} width={680} />
+              <Skeleton variant="rounded" height={38} width="25%" />
+              <Skeleton variant="rounded" height={28} width="40%" />
+              <Skeleton variant="rounded" height={50} width="100%" />
+              <Skeleton variant="rounded" height={50} width="100%" />
+              <Skeleton variant="rounded" height={50} width="100%" />
+              <Skeleton variant="rounded" height={50} width="100%" />
             </div>
           ) : drivers !== null ? (
             <Drivers drivers={drivers} />
