@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 from app.config.settings import settings
-from app.forecasting.forecast import Forecast
+from app.forecasting.forecast_service import ForecastService
 from app.loader.entsoe_loader import EntsoeLoader
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
@@ -24,26 +24,24 @@ class ForecastPipeline:
     def run(
         self, periods: int = settings.periods, retrain: bool = False
     ) -> pd.DataFrame:
-        loader = EntsoeLoader()
-        builder = HistoricalDatasetBuilder(loader)
-        raw = builder.update_raw_data()
+        builder = HistoricalDatasetBuilder()
+        raw_df, update_start = builder.update_raw_data()
 
-        if raw.empty:
+        if raw_df.empty:
             raise ValueError("Raw dataset is empty.")
 
-        processor = FeatureBuilder()
-        processed = processor.build_processed_data()
+        processed = FeatureBuilder().build_processed_data(update_start)
 
         if processed.empty:
             raise ValueError("Processed dataset is empty.")
 
-        if retrain or not self.models_exist():
+        if retrain or not self.models_need_retraining():
             logger.info("Training models...")
             ModelTrainer.train_all()
         else:
             logger.info("Using existing trained models.")
 
-        forecast_service = Forecast(
+        forecast_service = ForecastService(
             load_model=LoadModel.load(settings.load_model_pkl),
             wind_model=WindModel.load(settings.wind_model_pkl),
             solar_model=SolarModel.load(settings.solar_model_pkl),
@@ -90,9 +88,7 @@ class ForecastPipeline:
         return result
 
     @staticmethod
-    def models_exist() -> bool:
-        """Return True when all trained model files exist."""
-
+    def models_need_retraining() -> bool:
         return all(
             Path(path).exists()
             for path in (

@@ -1,178 +1,241 @@
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
+import pytest
 
 from app.services.forecast_pipeline import ForecastPipeline
 
 
 class TestForecastPipeline:
 
-    @patch("app.services.forecast_pipeline.EntsoeLoader")
-    @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
-    def test_run_raises_when_raw_dataset_is_empty(
-        self,
-        mock_dataset_builder,
-        mock_loader,
-    ):
-        mock_builder_instance = mock_dataset_builder.return_value
-        mock_builder_instance.update_raw_data.return_value = pd.DataFrame()
-
-        with patch.object(
-            ForecastPipeline,
-            "models_exist",
-            return_value=True,
-        ):
-            try:
-                ForecastPipeline().run()
-            except ValueError as exc:
-                assert str(exc) == "Raw dataset is empty."
-            else:
-                raise AssertionError("Expected ValueError for empty raw dataset")
-
+    @patch("app.services.forecast_pipeline.ForecastService")
+    @patch("app.services.forecast_pipeline.PriceModel")
+    @patch("app.services.forecast_pipeline.SolarModel")
+    @patch("app.services.forecast_pipeline.WindModel")
+    @patch("app.services.forecast_pipeline.LoadModel")
+    @patch("app.services.forecast_pipeline.ModelTrainer")
     @patch("app.services.forecast_pipeline.FeatureBuilder")
     @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
-    @patch("app.services.forecast_pipeline.EntsoeLoader")
-    def test_run_raises_when_processed_dataset_is_empty(
+    def test_run_without_retraining(
         self,
-        mock_loader,
-        mock_dataset_builder,
+        mock_builder,
         mock_feature_builder,
+        mock_trainer,
+        mock_load_model,
+        mock_wind_model,
+        mock_solar_model,
+        mock_price_model,
+        mock_forecast_service,
+        tmp_path,
     ):
-        raw = pd.DataFrame(
+        raw_df = pd.DataFrame(
             {
-                "timestamp": pd.date_range(
-                    "2026-01-01",
-                    periods=2,
-                    freq="h",
-                    tz="UTC",
+                "timestamp": pd.to_datetime(
+                    ["2026-08-20 12:00"],
+                    utc=True,
                 ),
-                "price": [100.0, 110.0],
+                "load": [100],
+                "wind": [20],
+                "solar": [50],
+                "price": [80],
             }
         )
 
-        mock_dataset_builder.return_value.update_raw_data.return_value = raw
+        processed_df = pd.DataFrame(
+            {
+                "load": [100],
+                "wind": [20],
+                "solar": [50],
+                "price": [80],
+            }
+        )
+
+        forecast_df = pd.DataFrame(
+            {
+                "timestamp": ["2026-08-21 12:00"],
+                "price": [90],
+            }
+        )
+
+        update_start = pd.Timestamp(
+            "2026-08-20 12:00",
+            tz="UTC",
+        )
+
+        mock_builder.return_value.update_raw_data.return_value = (
+            raw_df,
+            update_start,
+        )
+
+        mock_feature_builder.return_value.build_processed_data.return_value = (
+            processed_df
+        )
+
+        mock_forecast_service.return_value.recursive_forecast.return_value = forecast_df
+
+        output_path = tmp_path / "forecast" / "forecast.csv"
+
+        with patch(
+            "app.services.forecast_pipeline.settings.forecast_file",
+            output_path,
+        ), patch.object(
+            ForecastPipeline,
+            "models_need_retraining",
+            return_value=True,
+        ):
+
+            result = ForecastPipeline().run(periods=96)
+
+        pd.testing.assert_frame_equal(
+            result,
+            forecast_df,
+        )
+
+        mock_builder.return_value.update_raw_data.assert_called_once()
+
+        mock_feature_builder.return_value.build_processed_data.assert_called_once_with(
+            update_start
+        )
+
+        mock_trainer.train_all.assert_not_called()
+
+        mock_forecast_service.return_value.recursive_forecast.assert_called_once_with(
+            periods=96
+        )
+
+        assert output_path.exists()
+
+        saved = pd.read_csv(output_path)
+
+        assert len(saved) == len(forecast_df)
+
+    @patch("app.services.forecast_pipeline.ForecastService")
+    @patch("app.services.forecast_pipeline.PriceModel")
+    @patch("app.services.forecast_pipeline.SolarModel")
+    @patch("app.services.forecast_pipeline.WindModel")
+    @patch("app.services.forecast_pipeline.LoadModel")
+    @patch("app.services.forecast_pipeline.ModelTrainer")
+    @patch("app.services.forecast_pipeline.FeatureBuilder")
+    @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
+    def test_run_with_retraining(
+        self,
+        mock_builder,
+        mock_feature_builder,
+        mock_trainer,
+        mock_load_model,
+        mock_wind_model,
+        mock_solar_model,
+        mock_price_model,
+        mock_forecast_service,
+        tmp_path,
+    ):
+        raw_df = pd.DataFrame({"load": [100]})
+        processed_df = pd.DataFrame({"load": [100]})
+        forecast_df = pd.DataFrame({"price": [90]})
+
+        update_start = pd.Timestamp(
+            "2026-08-20 12:00",
+            tz="UTC",
+        )
+
+        mock_builder.return_value.update_raw_data.return_value = (
+            raw_df,
+            update_start,
+        )
+
+        mock_feature_builder.return_value.build_processed_data.return_value = (
+            processed_df
+        )
+
+        mock_forecast_service.return_value.recursive_forecast.return_value = forecast_df
+
+        output_path = tmp_path / "forecast" / "forecast.csv"
+
+        with patch(
+            "app.services.forecast_pipeline.settings.forecast_file",
+            output_path,
+        ):
+
+            result = ForecastPipeline().run(
+                periods=96,
+                retrain=True,
+            )
+
+        mock_trainer.train_all.assert_called_once()
+
+        mock_forecast_service.return_value.recursive_forecast.assert_called_once_with(
+            periods=96
+        )
+
+        assert output_path.exists()
+        assert len(result) == 1
+
+    @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
+    def test_run_raises_when_raw_is_empty(
+        self,
+        mock_builder,
+    ):
+        mock_builder.return_value.update_raw_data.return_value = (
+            pd.DataFrame(),
+            pd.Timestamp("2026-08-20", tz="UTC"),
+        )
+
+        with pytest.raises(
+            ValueError,
+            match="Raw dataset is empty",
+        ):
+            ForecastPipeline().run()
+
+    @patch("app.services.forecast_pipeline.FeatureBuilder")
+    @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
+    def test_run_raises_when_processed_is_empty(
+        self,
+        mock_builder,
+        mock_feature_builder,
+    ):
+        raw_df = pd.DataFrame({"load": [100]})
+
+        update_start = pd.Timestamp(
+            "2026-08-20 12:00",
+            tz="UTC",
+        )
+
+        mock_builder.return_value.update_raw_data.return_value = (
+            raw_df,
+            update_start,
+        )
 
         mock_feature_builder.return_value.build_processed_data.return_value = (
             pd.DataFrame()
         )
 
-        with patch.object(
-            ForecastPipeline,
-            "models_exist",
-            return_value=True,
+        with pytest.raises(
+            ValueError,
+            match="Processed dataset is empty",
         ):
-            try:
-                ForecastPipeline().run()
-            except ValueError as exc:
-                assert str(exc) == "Processed dataset is empty."
-            else:
-                raise AssertionError("Expected ValueError for empty processed dataset")
+            ForecastPipeline().run()
 
-    @patch("app.services.forecast_pipeline.PriceModel.make_features")
-    @patch("app.services.forecast_pipeline.SolarModel.make_features")
-    @patch("app.services.forecast_pipeline.WindModel.make_features")
-    @patch("app.services.forecast_pipeline.LoadModel.make_features")
-    @patch("app.services.forecast_pipeline.Forecast")
-    @patch("app.services.forecast_pipeline.ModelTrainer.train_all")
-    @patch("app.services.forecast_pipeline.FeatureBuilder")
-    @patch("app.services.forecast_pipeline.HistoricalDatasetBuilder")
-    @patch("app.services.forecast_pipeline.EntsoeLoader")
-    def test_run_retrains_when_models_do_not_exist(
-        self,
-        mock_loader,
-        mock_dataset_builder,
-        mock_feature_builder,
-        mock_train_all,
-        mock_forecast,
-        mock_load_model,
-        mock_wind_model,
-        mock_solar_model,
-        mock_price_model,
-    ):
-        raw = pd.DataFrame(
-            {
-                "timestamp": pd.date_range(
-                    "2026-01-01",
-                    periods=2,
-                    freq="h",
-                    tz="UTC",
-                ),
-                "price": [100.0, 110.0],
-            }
-        )
-
-        processed = pd.DataFrame(
-            {
-                "price": [100.0, 110.0],
-                "load": [1000.0, 1100.0],
-            }
-        )
-
-        forecast_result = pd.DataFrame(
-            {
-                "timestamp": pd.date_range(
-                    "2026-01-02",
-                    periods=2,
-                    freq="h",
-                    tz="UTC",
-                ),
-                "price": [120.0, 125.0],
-            }
-        )
-
-        mock_dataset_builder.return_value.update_raw_data.return_value = raw
-        mock_feature_builder.return_value.build_processed_data.return_value = processed
-        mock_forecast.return_value.recursive_forecast.return_value = forecast_result
-
-        with patch.object(
-            ForecastPipeline,
-            "models_exist",
-            return_value=False,
-        ):
-            result = ForecastPipeline().run()
-
-        mock_train_all.assert_called_once()
-
-        pd.testing.assert_frame_equal(result, forecast_result)
-
-    @patch("app.services.forecast_pipeline.PriceModel.make_features")
-    @patch("app.services.forecast_pipeline.SolarModel.make_features")
-    @patch("app.services.forecast_pipeline.WindModel.make_features")
-    @patch("app.services.forecast_pipeline.LoadModel.make_features")
-    def test_models_exist_returns_true_when_all_models_exist(
-        self,
-        mock_price_load,
-        mock_solar_load,
-        mock_wind_load,
-        mock_load_load,
-        tmp_path,
-    ):
-        model_paths = [
-            tmp_path / "load.pkl",
-            tmp_path / "wind.pkl",
-            tmp_path / "solar.pkl",
-            tmp_path / "price.pkl",
-        ]
-
+    def test_models_need_retraining_when_model_missing(self):
         with patch(
-            "app.config.settings.settings.load_model_pkl",
-            model_paths[0],
+            "app.services.forecast_pipeline.settings.load_model_pkl",
+            Path("/tmp/load.pkl"),
         ), patch(
-            "app.config.settings.settings.wind_model_pkl",
-            model_paths[1],
+            "app.services.forecast_pipeline.settings.wind_model_pkl",
+            Path("/tmp/wind.pkl"),
         ), patch(
-            "app.config.settings.settings.solar_model_pkl",
-            model_paths[2],
+            "app.services.forecast_pipeline.settings.solar_model_pkl",
+            Path("/tmp/solar.pkl"),
         ), patch(
-            "app.config.settings.settings.price_model_pkl",
-            model_paths[3],
+            "app.services.forecast_pipeline.settings.price_model_pkl",
+            Path("/tmp/price.pkl"),
         ):
-            for path in model_paths:
-                path.touch()
 
-            assert ForecastPipeline.models_exist() is True
+            result = ForecastPipeline.models_need_retraining()
 
-    def test_models_exist_returns_false_when_one_model_is_missing(
+        assert result is True
+
+    def test_models_need_retraining_when_models_are_recent(
         self,
         tmp_path,
     ):
@@ -183,21 +246,64 @@ class TestForecastPipeline:
             tmp_path / "price.pkl",
         ]
 
-        # Only three exist
-        for path in model_paths[:3]:
+        for path in model_paths:
             path.touch()
 
         with patch(
-            "app.config.settings.settings.load_model_pkl",
+            "app.services.forecast_pipeline.settings.load_model_pkl",
             model_paths[0],
         ), patch(
-            "app.config.settings.settings.wind_model_pkl",
+            "app.services.forecast_pipeline.settings.wind_model_pkl",
             model_paths[1],
         ), patch(
-            "app.config.settings.settings.solar_model_pkl",
+            "app.services.forecast_pipeline.settings.solar_model_pkl",
             model_paths[2],
         ), patch(
-            "app.config.settings.settings.price_model_pkl",
+            "app.services.forecast_pipeline.settings.price_model_pkl",
             model_paths[3],
         ):
-            assert ForecastPipeline.models_exist() is False
+
+            result = ForecastPipeline.models_need_retraining()
+
+        assert result is False
+
+    def test_models_need_retraining_when_models_are_old(
+        self,
+        tmp_path,
+    ):
+        import os
+        import time
+
+        model_paths = [
+            tmp_path / "load.pkl",
+            tmp_path / "wind.pkl",
+            tmp_path / "solar.pkl",
+            tmp_path / "price.pkl",
+        ]
+
+        old_time = time.time() - 8 * 24 * 60 * 60
+
+        for path in model_paths:
+            path.touch()
+            os.utime(
+                path,
+                (old_time, old_time),
+            )
+
+        with patch(
+            "app.services.forecast_pipeline.settings.load_model_pkl",
+            model_paths[0],
+        ), patch(
+            "app.services.forecast_pipeline.settings.wind_model_pkl",
+            model_paths[1],
+        ), patch(
+            "app.services.forecast_pipeline.settings.solar_model_pkl",
+            model_paths[2],
+        ), patch(
+            "app.services.forecast_pipeline.settings.price_model_pkl",
+            model_paths[3],
+        ):
+
+            result = ForecastPipeline.models_need_retraining()
+
+        assert result is True

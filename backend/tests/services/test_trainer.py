@@ -27,7 +27,7 @@ class TestModelTrainer:
             "app.services.trainer_pipeline.pd.read_csv",
             return_value=expected,
         ) as read_csv:
-            result = trainer.load_dataset("data.csv")
+            result = trainer.load_processed_dataset("data.csv")
 
         read_csv.assert_called_once_with(
             "data.csv",
@@ -77,12 +77,12 @@ class TestModelTrainer:
 
         with patch.object(
             trainer,
-            "load_dataset",
+            "load_processed_dataset",
             return_value=dataset,
-        ) as load_dataset:
+        ) as load_processed_dataset:
             trainer.train("price")
 
-        load_dataset.assert_called_once_with("processed.csv")
+        load_processed_dataset.assert_called_once_with("processed.csv")
         config.model_class.assert_called_once_with()
 
         fitted_data = model.fit.call_args.args[0]
@@ -124,12 +124,12 @@ class TestModelTrainer:
             {"price": features},
         ), patch.object(
             trainer,
-            "load_dataset",
+            "load_processed_dataset",
             return_value=dataset,
-        ) as load_dataset:
+        ) as load_processed_dataset:
             trainer.train("price")
 
-        load_dataset.assert_called_once()
+        load_processed_dataset.assert_called_once()
 
         fitted_data = model.fit.call_args.args[0]
 

@@ -17,8 +17,9 @@ class TestFeatures(unittest.TestCase):
 
     def test_add_time_features(self):
         df = pd.DataFrame(
-            {"timestamp": pd.to_datetime(["2026-08-20 14:30"], utc=True),
-             "price": [100]})
+            {"price": [100]},
+            index=["2026-08-20 14:30:00"],
+        )
         result = self.features.add_time_features(df)
         self.assertEqual(result["minute"].iloc[0], 30)
         self.assertEqual(result["hour"].iloc[0], 14)
@@ -69,7 +70,7 @@ class TestFeatures(unittest.TestCase):
                 "solar": range(3000, 3700),
             },
         )
-        df = df.set_index("timestamp", drop = False)
+        df = df.set_index("timestamp", drop=False)
         result = self.features.transform_all(df)
 
         for column in [

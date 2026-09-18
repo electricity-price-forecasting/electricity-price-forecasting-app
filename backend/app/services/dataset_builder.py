@@ -96,62 +96,76 @@ class HistoricalDatasetBuilder:
         end_ts = pd.to_datetime(end_date, utc=True)
         final_dataset = final_dataset.loc[start_ts:end_ts]
 
-        return final_dataset.dropna()
+        return final_dataset
 
-    def update_raw_data(self) -> pd.DataFrame:
+    def update_raw_data(self) -> tuple[pd.DataFrame, pd.Timestamp]:
         raw_path = settings.raw_file
 
         if not raw_path.exists():
-            return self.run()
+            raw = self.run()
+            return raw, raw["timestamp"].max()
 
         raw = pd.read_csv(raw_path)
 
         raw["timestamp"] = pd.to_datetime(
             raw["timestamp"],
             utc=True,
+            errors="coerce",
         )
 
-        last_timestamp = raw["timestamp"].max()
+        raw = raw.dropna(subset=["timestamp"])
+        raw = raw.sort_values("timestamp")
+
+        value_columns = ["load", "wind", "solar"]
+
+        missing_mask = raw[value_columns].isna().any(axis=1)
+
+        if missing_mask.any():
+            update_start = raw.loc[missing_mask, "timestamp"].min()
+        else:
+            update_start = raw["timestamp"].max()
+
         now = pd.Timestamp.now(tz="UTC")
 
-        if last_timestamp >= now:
-            return raw
-
         new_data = self.build_raw_data(
-            start_date=last_timestamp.isoformat(),
+            start_date=update_start.isoformat(),
             end_date=now.isoformat(),
-            refresh_cache=False,
+            refresh_cache=True,
         )
 
-        if new_data.empty:
-            return raw
+        if not new_data.empty:
+            new_data.index = pd.to_datetime(
+                new_data.index,
+                utc=True,
+            )
 
-        new_data.index = pd.to_datetime(
-            new_data.index,
-            utc=True,
-        )
+            new_data = new_data.reset_index()
+            new_data = new_data.rename(columns={"index": "timestamp"})
 
-        new_data = new_data[new_data.index > last_timestamp]
-        new_data = new_data.reset_index()
-        new_data = new_data.rename(columns={"index": "timestamp"})
+            raw = pd.concat(
+                [raw, new_data],
+                ignore_index=True,
+            )
 
-        if new_data.empty:
-            return raw
+            raw = (
+                raw.drop_duplicates(
+                    subset="timestamp",
+                    keep="last",
+                )
+                .sort_values("timestamp")
+                .reset_index(drop=True)
+            )
 
-        updated = pd.concat([raw, new_data], ignore_index=True)
-        updated = (
-            updated
-            .drop_duplicates(subset="timestamp", keep="last")
-            .sort_values("timestamp")
-            .reset_index(drop=True)
-        )
-        temp_path = raw_path.with_suffix(".tmp.csv")
+            temp_path = raw_path.with_suffix(".tmp.csv")
 
-        updated.to_csv(temp_path, index=False)
+            raw.to_csv(
+                temp_path,
+                index=False,
+            )
 
-        temp_path.replace(raw_path)
+            temp_path.replace(raw_path)
 
-        return updated
+        return raw, update_start
 
     def run(self):
         today = pd.Timestamp.now(tz="UTC")

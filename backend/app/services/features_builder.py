@@ -5,6 +5,7 @@ import pandas as pd
 
 from app.config.settings import settings
 from app.features.features import Features
+from app.services.dataset_builder import HistoricalDatasetBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,9 @@ class FeatureBuilder:
         )
 
         temp_path = processed_path.with_suffix(".tmp.csv")
+        processed_df = processed_df.sort_index()
+        processed_df.index.name = "timestamp"
+        processed_df = processed_df.reset_index()
 
         processed_df.to_csv(
             temp_path,
@@ -32,11 +36,11 @@ class FeatureBuilder:
 
         temp_path.replace(processed_path)
 
-    def build_processed_data(self) -> pd.DataFrame:
-
+    def build_processed_data(
+        self,
+        update_start: pd.Timestamp,
+    ) -> pd.DataFrame:
         raw_df = pd.read_csv(settings.raw_file)
-
-        raw_df.columns = raw_df.columns.astype(str).str.strip()
 
         raw_df["timestamp"] = pd.to_datetime(
             raw_df["timestamp"],
@@ -46,22 +50,23 @@ class FeatureBuilder:
 
         raw_df = raw_df.dropna(subset=["timestamp"])
         raw_df = raw_df.sort_values("timestamp")
+        raw_df = raw_df.set_index("timestamp")
 
-        # No processed file -> build everything
+        # No processed file yet
         if not settings.processed_file.exists():
-            processed_df = self.features.transform_all(raw_df)
+            raw_for_features = raw_df.copy()
+
+            value_columns = ["load", "wind", "solar"]
+
+            raw_for_features[value_columns] = raw_for_features[value_columns].ffill()
+
+            processed_df = self.features.transform_all(raw_for_features)
 
             self.save_processed_data(processed_df)
 
-            logger.info(
-                "Processed data built: %d rows, %d columns",
-                len(processed_df),
-                len(processed_df.columns),
-            )
-
             return processed_df
 
-        # Processed file exists -> load it
+        # Load existing processed data
         processed_df = pd.read_csv(settings.processed_file)
 
         processed_df["timestamp"] = pd.to_datetime(
@@ -72,104 +77,70 @@ class FeatureBuilder:
 
         processed_df = processed_df.dropna(subset=["timestamp"])
 
-        last_processed_timestamp = processed_df["timestamp"].max()
-        last_raw_timestamp = raw_df["timestamp"].max()
+        processed_df = processed_df.set_index("timestamp").sort_index()
 
-        # Already up to date
-        if last_processed_timestamp >= last_raw_timestamp:
-            logger.info(
-                "Processed data is already up to date: %s",
-                last_processed_timestamp,
-            )
-
-            return processed_df
-
-        # Raw data has new rows
         return self.update_processed_data(
             processed_df,
             raw_df,
-            last_processed_timestamp,
+            update_start,
         )
 
     def update_processed_data(
-            self,
-            processed_df: pd.DataFrame,
-            raw_df: pd.DataFrame,
-            last_processed_timestamp,
+        self,
+        processed_df: pd.DataFrame,
+        raw_df: pd.DataFrame,
+        update_start: pd.Timestamp,
     ) -> pd.DataFrame:
-        """Update processed data using 672 rows of historical context."""
 
-        # Find new raw rows
-        new_raw_df = raw_df[
-            raw_df["timestamp"] > last_processed_timestamp
-            ].copy()
-
-        if new_raw_df.empty:
-            logger.info("Processed data is already up to date.")
-            return processed_df
-
-        # One week of context
         context_rows = 672
 
-        # Position of the first new row
-        first_new_timestamp = new_raw_df["timestamp"].iloc[0]
+        # Find update_start position
+        position = raw_df.index.searchsorted(update_start)
 
-        first_new_position = raw_df["timestamp"].searchsorted(
-            first_new_timestamp
-        )
-
-        # Take the previous 672 rows
+        # Keep one week of history for features
         context_start = max(
             0,
-            first_new_position - context_rows,
+            position - context_rows,
         )
 
-        context_df = raw_df.iloc[
-            context_start:first_new_position
-        ].copy()
+        data_to_transform = raw_df.iloc[context_start:].copy()
 
-        # History + new data
-        data_to_transform = pd.concat(
-            [context_df, new_raw_df],
-            ignore_index=True,
-        )
+        value_columns = [
+            "load",
+            "wind",
+            "solar",
+        ]
 
-        data_to_transform = data_to_transform.set_index("timestamp", drop = False)
-        data_to_transform = data_to_transform.sort_index()
+        # IMPORTANT:
+        # ffill only for feature calculation
+        data_to_transform[value_columns] = data_to_transform[value_columns].ffill()
 
-        # Build features
-        transformed_df = self.features.transform_all(
-            data_to_transform
-        )
+        # Recalculate features
+        transformed = self.features.transform_all(data_to_transform)
 
-        # Keep only new rows
-        new_processed_df = transformed_df[
-            transformed_df["timestamp"] > last_processed_timestamp
-            ].copy()
+        # Keep old processed data BEFORE update_start
+        processed_before = processed_df[processed_df.index < update_start]
 
-        # Append to existing processed data
-        processed_df = pd.concat(
-            [processed_df, new_processed_df],
-            ignore_index=True,
-        )
+        # Use newly calculated data FROM update_start
+        processed_after = transformed[transformed.index >= update_start]
 
-        # Sort
-        processed_df = (
-            processed_df
-            .sort_values("timestamp")
-            .reset_index(drop=True)
-        )
+        # Replace old ffilled rows
+        updated = pd.concat(
+            [
+                processed_before,
+                processed_after,
+            ]
+        ).sort_index()
 
-        # Save
-        self.save_processed_data(processed_df)
+        updated = updated[~updated.index.duplicated(keep="last")]
 
-        logger.info(
-            "Processed data updated: %d new rows, %d total rows",
-            len(new_processed_df),
-            len(processed_df),
-        )
+        self.save_processed_data(updated)
 
-        return processed_df
+        return updated
+
 
 if __name__ == "__main__":
-    FeatureBuilder().build_processed_data()
+
+    raw_df, update_start = HistoricalDatasetBuilder().update_raw_data()
+
+    FeatureBuilder().build_processed_data(update_start=update_start)

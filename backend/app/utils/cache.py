@@ -14,7 +14,7 @@ def get_cached_or_fetch(
     file_path = os.path.join(cache_dir, f"{data_type}_{year}_{month:02d}.parquet")
 
     start = pd.Timestamp(year=year, month=month, day=1, tz="UTC")
-    end = start + pd.offsets.MonthEnd(0) + pd.Timedelta(days=1, microseconds=-1)
+    end = start + pd.offsets.MonthBegin(1)
 
     if refresh or not os.path.exists(file_path):
         df = fetch_func(start, end)
@@ -35,6 +35,7 @@ def get_cached_or_fetch(
 
     # Make sure timestamps are UTC
     cached.index = pd.to_datetime(cached.index, utc=True)
+    cached = cached.dropna()
 
     last_timestamp = cached.index.max()
 

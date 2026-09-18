@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class ModelTrainer:
 
-    def load_dataset(self, path: Path) -> pd.DataFrame:
+    def load_processed_dataset(self, path: Path) -> pd.DataFrame:
         """Load the processed feature dataset."""
         return pd.read_csv(
             path,
@@ -23,7 +23,7 @@ class ModelTrainer:
 
     def train(self, name: str) -> None:
         processed_path = settings.processed_file
-        processed_df = self.load_dataset(processed_path)
+        processed_df = self.load_processed_dataset(processed_path)
         config = MODEL_REGISTRY[name]
 
         dataset = processed_df[[name] + MODEL_FEATURES[name]]
