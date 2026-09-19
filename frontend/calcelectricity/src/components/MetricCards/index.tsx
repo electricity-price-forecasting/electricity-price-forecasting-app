@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
-import SectionHeader from '../SectionHeader'
+import SectionHeader from '../SectionHeader/index'
+import monitorImg from '../../assets/Container.png'
+import explainImg from '../../assets/Explain.png'
+import actImg from '../../assets/Act.png'
 import { Wind, Sun, Flame, Zap, Droplets, MousePointer, CheckCircle2, TrendingUp } from 'lucide-react'
 import './index.css'
+
+interface WorkflowCard {
+  id: string
+  title: string
+  description: string
+  image: string
+}
 
 interface FeatureCard {
   id: string
@@ -15,16 +25,19 @@ const CARDS: FeatureCard[] = [
     id: 'monitor',
     title: 'Monitor',
     description: 'What changed since the previous forecast?',
+    image: monitorImg
   },
   {
     id: 'explain',
     title: 'Explain',
     description: 'Which drivers caused the movement?',
+    image: explainImg 
   },
   {
     id: 'act',
     title: 'Act',
     description: 'Does the change require a decision now?',
+    image: actImg 
   },
 ]
 
@@ -39,7 +52,13 @@ export default function MetricCards() {
         <SectionHeader
           title="Complex market data"
           text="The experience is structured around the questions electricity-market users ask under time pressure"
+          ctaLabel="Try workflow >"
+          ctaHref="#complex-market-data"
         />
+
+        <div className="metrics-grid">
+          {/* continue coding */}
+        </div>
 
         {/* 12-column Grid System from the presentation: row + col-12 col-md-4 + g-4 */}
         <div className="row g-4">

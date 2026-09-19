@@ -8,8 +8,165 @@
   background: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-m);
-  padding: 28px;
+  padding: 20px;
 }
+
+/* --- Візуальний блок-підложка всередині картки (з відступом, не в край) --- */
+.feature-card__visual {
+  position: relative;
+  height: 148px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(
+      100deg,
+      rgba(34, 197, 94, 0.08) 0px,
+      rgba(34, 197, 94, 0.08) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    #f7f6f1;
+}
+
+.feature-card__visual--icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 6px 16px -8px rgba(20, 21, 26, 0.18);
+}
+
+.icon-chip img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/* --- Role-based workspaces --- */
+.feature-card__visual--workspace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-chart {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  height: 100px;
+}
+
+.mini-chart svg {
+  width: 100%;
+  height: 70px;
+  margin-top: 15px;
+}
+
+.role-tag {
+  position: absolute;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid currentColor;
+}
+
+.role-tag--analyst {
+  top: 0;
+  left: 32%;
+  color: #0f9d78;
+  background: #e8fbf3;
+}
+
+.role-tag--operator {
+  top: 46px;
+  right: 0;
+  color: #c2740b;
+  background: #fef3e2;
+}
+
+.role-tag--trader {
+  bottom: 0;
+  left: 0;
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
+}
+
+/* --- Live forecast revisions --- */
+.feature-card__visual--revisions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rev-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.rev-row--active {
+  border-color: var(--color-accent-green);
+  box-shadow: 0 0 0 1px var(--color-accent-green);
+}
+
+.rev-row__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.rev-row__icon--amber { background: #fef3e2; color: #c2740b; }
+.rev-row__icon--rose { background: #fde3e3; color: #d13b3b; }
+.rev-row__icon--blue { background: #e3ecfd; color: #2563eb; }
+
+.rev-row__lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* --- Спільні заглушки-лінії --- */
+.mock-line {
+  display: block;
+  height: 7px;
+  border-radius: 4px;
+  background: #e7e7e3;
+}
+
+.mock-line--w70 { width: 70%; }
+.mock-line--w50 { width: 50%; }
+.mock-line--w80 { width: 80%; }
+.mock-line--w40 { width: 40%; }
+.mock-line--w60 { width: 60%; }
+.mock-line--w35 { width: 35%; }
+
+
 
 .feature-card__icon {
   display: inline-flex;
@@ -42,6 +199,13 @@
   padding: 28px;
   overflow: hidden;
 }
+
+.feature-cards__wide-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 
 .trend-graphic {
   width: 100%;

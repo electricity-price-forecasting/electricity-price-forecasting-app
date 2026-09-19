@@ -1,0 +1,139 @@
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 62%;
+  z-index: 0;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(10, 18, 24, 0.35) 0%, rgba(10, 18, 24, 0.05) 30%, rgba(10, 18, 24, 0.1) 60%, rgba(10, 18, 24, 0.55) 100%),
+    linear-gradient(90deg, rgba(10, 18, 24, 0.35) 0%, rgba(10, 18, 24, 0) 45%);
+}
+
+/* Вертикальний стовпчик посилань праворуч, накладений прямо на фото —
+   в макеті немає окремого header-бару чи логотипу над hero. */
+.hero__nav {
+  position: absolute;
+  top: 38%;
+  right: max(24px, calc((100% - var(--container-width)) / 2 + 24px));
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 22px;
+}
+
+.hero__nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  transition: color 0.2s ease;
+}
+
+.hero__nav-link:hover {
+  color: #ffffff;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+  padding-top: 64px;
+}
+
+.hero__title {
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 5.6vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.hero__subtitle {
+  max-width: 420px;
+  margin-top: 22px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.hero__cta {
+  margin-top: 32px;
+  padding: 15px 28px;
+}
+
+.hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+}
+
+.hero__scroll-arrow {
+  font-size: 16px;
+  line-height: 1;
+  animation: hero-scroll-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+@media (max-width: 900px) {
+  .hero__nav {
+    top: auto;
+    bottom: 88px;
+    right: 24px;
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .hero__nav-link {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    min-height: 88vh;
+  }
+
+  .hero__content {
+    padding-top: 40px;
+  }
+
+  .hero__title {
+    font-size: 38px;
+  }
+
+  .hero__nav {
+    display: none;
+  }
+}

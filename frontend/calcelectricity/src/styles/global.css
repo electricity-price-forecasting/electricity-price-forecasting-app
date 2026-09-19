@@ -14,7 +14,8 @@
   --color-accent-green: #22c55e;
 
   /* Типографіка */
-  --font-heading: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  /* --font-heading: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif; */
   --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
 
   --container-width: 1200px;
