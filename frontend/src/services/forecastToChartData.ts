@@ -1,16 +1,19 @@
 import type { ChartPoint, ForecastData } from "../types/types";
+import { FORECAST_TIME_ZONE } from "./forecastTime";
 
 type ForecastChartPoint = ChartPoint & {
   timestamp: string;
 };
 
 const timeFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: FORECAST_TIME_ZONE,
   hour: "2-digit",
   minute: "2-digit",
   hourCycle: "h23",
 });
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: FORECAST_TIME_ZONE,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",

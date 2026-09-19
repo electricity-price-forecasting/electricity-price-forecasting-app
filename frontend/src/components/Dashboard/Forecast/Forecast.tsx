@@ -15,6 +15,11 @@ import {
   YAxis,
 } from "recharts";
 import { mapForecastToChartData } from "../../../services/forecastToChartData";
+import {
+  FORECAST_TIME_ZONE,
+  forecastCalendarToTimestamp,
+  getForecastCalendarDate,
+} from "../../../services/forecastTime";
 import { ChartPeriods } from "../../../types/enums";
 import classNames from "classnames";
 import { Bars } from "react-loader-spinner";
@@ -43,31 +48,28 @@ export const Forecast: React.FC<Props> = ({
   const [forecastInterval, setForecastInterval] = useState("60");
 
   const actualPriceGradientId = useId();
+  const forecastGradientId = useId();
 
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
+  const start = getForecastCalendarDate(new Date());
+  start.setUTCHours(0, 0, 0, 0);
   const end = new Date(start);
+  end.setUTCHours(23, 45, 0, 0);
 
   switch (period) {
     case ChartPeriods.day:
-      end.setDate(end.getDate() + 1);
       break;
 
     case ChartPeriods.week:
-      // Monday is the first day; the range ends at Sunday midnight.
-      start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
-      end.setTime(start.getTime());
-      end.setDate(end.getDate() + 6);
+      end.setUTCDate(end.getUTCDate() + 6);
       break;
 
     case ChartPeriods.month:
-      start.setDate(start.getDate() - 14);
-      end.setDate(end.getDate() + 14);
+      end.setUTCDate(end.getUTCDate() + 29);
       break;
   }
 
-  const startMs = start.getTime();
-  const endMs = end.getTime();
+  const startMs = forecastCalendarToTimestamp(start);
+  const endMs = forecastCalendarToTimestamp(end);
 
   const transformedData = mapForecastToChartData(rawData ?? []);
 
@@ -78,23 +80,23 @@ export const Forecast: React.FC<Props> = ({
       return timestamp >= startMs && timestamp <= endMs;
     })
     .filter((point) => {
-      const date = new Date(point.timestamp);
-      const timestamp = date.getTime();
+      const timestamp = new Date(point.timestamp).getTime();
+      const [hour, minute] = point.time.split(":").map(Number);
 
       if (timestamp === endMs) {
         return true;
       }
 
       if (forecastInterval === "60") {
-        return date.getMinutes() === 0;
+        return minute === 0;
       }
 
       if (forecastInterval === "30") {
-        return date.getMinutes() % 30 === 0;
+        return minute % 30 === 0;
       }
 
       if (forecastInterval === "day") {
-        return date.getHours() === 0 && date.getMinutes() === 0;
+        return hour === 0 && minute === 0;
       }
 
       return true;
@@ -117,29 +119,55 @@ export const Forecast: React.FC<Props> = ({
     index === bridgeIndex ? { ...point, forecast: point.actual } : point,
   );
 
+  const yTickStep = 40;
+  const { minPrice, maxPrice } = visibleData.reduce(
+    (bounds, point) => {
+      const price = point.actual ?? point.forecast;
+      if (price == null || !Number.isFinite(price)) return bounds;
+
+      return {
+        minPrice: Math.min(bounds.minPrice, price),
+        maxPrice: Math.max(bounds.maxPrice, price),
+      };
+    },
+    { minPrice: 0, maxPrice: 0 },
+  );
+  const yAxisMin = Math.floor(minPrice / yTickStep) * yTickStep;
+  const yAxisMax = Math.max(
+    yAxisMin + yTickStep,
+    Math.ceil(maxPrice / yTickStep) * yTickStep,
+  );
+  const yTicks = Array.from(
+    { length: (yAxisMax - yAxisMin) / yTickStep + 1 },
+    (_, index) => yAxisMin + index * yTickStep,
+  );
+
   const xTicks: number[] = [];
 
-  for (const tick = new Date(start); tick.getTime() < endMs; ) {
-    xTicks.push(tick.getTime());
-
-    if (period === ChartPeriods.day) {
-      tick.setHours(tick.getHours() + 4);
-    } else {
-      tick.setDate(tick.getDate() + (period === ChartPeriods.week ? 1 : 4));
+  if (period === ChartPeriods.day) {
+    for (const tick = new Date(start); tick.getTime() < end.getTime(); ) {
+      xTicks.push(forecastCalendarToTimestamp(tick));
+      tick.setUTCHours(tick.getUTCHours() + 4);
+    }
+    xTicks.push(endMs);
+  } else {
+    const tickCount = period === ChartPeriods.week ? 7 : 8;
+    for (let index = 0; index < tickCount; index += 1) {
+      xTicks.push(startMs + ((endMs - startMs) * index) / (tickCount - 1));
     }
   }
-
-  xTicks.push(endMs);
 
   const axisFormatter = new Intl.DateTimeFormat(
     "en-GB",
     period === ChartPeriods.day
       ? {
+          timeZone: FORECAST_TIME_ZONE,
           hour: "2-digit",
           minute: "2-digit",
           hourCycle: "h23",
         }
       : {
+          timeZone: FORECAST_TIME_ZONE,
           day: "2-digit",
           month: "short",
         },
@@ -286,6 +314,16 @@ export const Forecast: React.FC<Props> = ({
                   <stop offset="15%" stopColor="#494FDF" stopOpacity={0.22} />
                   <stop offset="100%" stopColor="#494FDF" stopOpacity={0} />
                 </linearGradient>
+                <linearGradient
+                  id={forecastGradientId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="15%" stopColor="#007DFF" stopOpacity={0.22} />
+                  <stop offset="100%" stopColor="#007DFF" stopOpacity={0} />
+                </linearGradient>
               </defs>
 
               <CartesianGrid stroke="#ececf2" vertical={false} />
@@ -322,8 +360,10 @@ export const Forecast: React.FC<Props> = ({
               />
 
               <YAxis
-                domain={[0, 200]}
-                ticks={[0, 40, 80, 120, 160, 200]}
+                domain={[yAxisMin, yAxisMax]}
+                ticks={yTicks}
+                interval={0}
+                allowDataOverflow
                 axisLine={false}
                 tickLine={false}
                 tick={{
@@ -363,6 +403,21 @@ export const Forecast: React.FC<Props> = ({
                 baseValue={0}
                 stroke="none"
                 fill={`url(#${actualPriceGradientId})`}
+                fillOpacity={1}
+                dot={false}
+                activeDot={false}
+                legendType="none"
+                tooltipType="none"
+                connectNulls={true}
+                isAnimationActive={false}
+              />
+
+              <Area
+                type="linear"
+                dataKey="forecast"
+                baseValue={0}
+                stroke="none"
+                fill={`url(#${forecastGradientId})`}
                 fillOpacity={1}
                 dot={false}
                 activeDot={false}
