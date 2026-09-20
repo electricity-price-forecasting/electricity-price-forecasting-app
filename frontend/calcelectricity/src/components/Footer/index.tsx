@@ -61,7 +61,7 @@ export default function Footer() {
 
       <div className="container footer__bottom">
         <div className="footer__social">
-          <a href="#" aria-label="GitHub"><IconGithub /></a>
+          <a href="https://github.com/electricity-price-forecasting/electricity-price-forecasting-app.git" aria-label="GitHub"><IconGithub /></a>
           <a href="#" aria-label="YouTube"><IconYoutube /></a>
           <a href="#" aria-label="LinkedIn"><IconLinkedin /></a>
         </div>
