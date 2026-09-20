@@ -39,6 +39,29 @@
   object-fit: cover;
 }
 
+.metric-card__body {
+  padding: 24px;
+}
+
+.metric-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.metric-card__text {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 860px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* Container from presentation */
 .container {
