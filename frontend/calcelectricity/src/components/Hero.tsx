@@ -43,7 +43,7 @@ interface NavLink {
 
 const NAV_LINKS: NavLink[] = [
   { label: 'Products', href: '#product' },
-  { label: 'How it works', href: '#features' },
+  { label: 'How it works', href: 'https://arksight.io/' },
   { label: 'Coverage', href: '#footer' },
 ]
 

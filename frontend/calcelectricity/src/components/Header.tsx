@@ -7,7 +7,7 @@ function Header() {
 
       <nav className="navigation">
         <a href="#calculator">Calculator</a>
-        <a href="#formula">How it works</a>
+        <a href="https://arksight.io/">How it works</a>
       </nav>
     </header>
   );
