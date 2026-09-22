@@ -1,44 +1,9 @@
-/* .brand-statement__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.brand-statement__kicker {
-  text-align: center;
-  align-items: center;
-
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--color-ink-soft);
-
-}
-
-.brand-statement__word {
-  margin-top: 12px;
-  font-size: clamp(64px, 14vw, 168px);
-  font-weight: 800;
-  background: linear-gradient(180deg, #e3d6fb 0%, #f1ecfc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-align: center;
-}
-
-.brand-statement__text {
-  margin-top: 16px;
-  max-width: 480px;
-  font-size: 17px;
-  color: var(--color-ink-soft);
-} */
-
 .brand-statement {
-  padding-top: 56px;
-  padding-bottom: 8px;
+  padding-top: 64px;
+  padding-bottom: 16px;
   text-align: center;
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
 }
 
 .brand-statement .container {
@@ -53,12 +18,56 @@
   color: var(--color-ink-soft);
 }
 
+/* Обгортка — position:relative, щоб фото-варіант міг накластись absolute поверх */
 .brand-statement__word {
-  margin-top: 8px;
+  position: relative;
+  margin-top: 4px;
+  width: 100%;
   font-family: var(--font-heading);
-  font-size: clamp(72px, 15vw, 176px);
+  font-size: clamp(110px, 19vw, 300px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
+  cursor: default;
+}
+
+.brand-statement__word-base,
+.brand-statement__word-photo {
+  display: block;
+}
+
+/* Сірий варіант — зникає при наведенні */
+.brand-statement__word-base {
   color: #dcdcdc;
+  transition: opacity 0.45s ease;
+}
+
+/* Варіант із заливкою фото дамби, обрізаний по формі тексту.
+   За замовчуванням прозорий (opacity:0) */
+.brand-statement__word-photo {
+  position: absolute;
+  inset: 0;
+  background-position: center 55%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;   /* ключова властивість — обрізає фон по формі букв */
+  background-clip: text;
+  color: transparent;              /* сам текст стає прозорим, лишається тільки фон-у-межах-букв */
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* При наведенні на обгортку — плавно міняємо видимість обох шарів */
+.brand-statement__word:hover .brand-statement__word-base {
+  opacity: 0;
+}
+
+.brand-statement__word:hover .brand-statement__word-photo {
+  opacity: 1;
+}
+
+@media (max-width: 700px) {
+  .brand-statement__word {
+    font-size: clamp(64px, 22vw, 140px);
+  }
 }

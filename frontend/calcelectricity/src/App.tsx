@@ -82,7 +82,7 @@ import Footer from './components/Footer/index'
 function App() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <main>
         <Hero />

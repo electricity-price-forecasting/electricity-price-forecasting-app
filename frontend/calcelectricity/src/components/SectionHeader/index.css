@@ -8,8 +8,6 @@
 }
 
 .section-header__text {
-  /* max-width: 560px; */
-
   position: relative;
   max-width: 560px;
   padding-left: 16px;

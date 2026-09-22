@@ -8,13 +8,11 @@ export default function ProductShowcase() {
       <div className="container">
         <SectionHeader
           title={'Know what changed.\nUnderstand what matter'}
-          text="Monitor European electricity-price forecasts, understand revisions and evaluate confidence — all in one place "
+          text="Monitor European electricity-price forecasts, understand revisions and evaluate confidence — all in one place"
           ctaLabel="Open dashboard >"
           ctaHref="#features"
         />
-        <a href="#calculator" className="hero-button">
-        Open dashboard
-        </a>
+
         <div className="showcase__frame">
           <img
             src={dashboardImg}

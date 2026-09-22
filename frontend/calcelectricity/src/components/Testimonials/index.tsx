@@ -9,17 +9,17 @@ import './index.css'
 interface Testimonial {
   name: string
   role: string
-  quote: string
+  text: string
   avatar: string
 }
 
 const TESTIMONIALS: Testimonial[] = [
-  { name: 'James R.', role: 'Energy Trader', quote: 'The forecasts give us a much clearer picture of where prices are heading. We can spot potential peaks earlier and make decisions with more confidence.', avatar: JamesAvatar },
-  { name: 'Sarah M.', role: 'Procurement Manager', quote: 'Instead of relying on historical averages, we can now see what the market is likely to do next. It’s made our energy purchasing decisions more informed.', avatar: SarahAvatar },
-  { name: 'Daniel K.', role: 'Energy Analyst', quote: 'I used to spend hours combining market data from different sources. Having forecasts, trends and price drivers in one place has significantly streamlined my analysis.', avatar: DanielAvatar },
-  { name: 'Emma T.', role: 'Renewable Energy Developer', quote: 'Understanding when electricity prices are likely to rise or fall helps us plan around generation and maximise the value of our renewable assets.', avatar: EmmaAvatar },
-  { name: 'Olivia S.', role: 'Energy Consultant', quote: 'What I like most is the combination of prediction and context. It doesn’t just show you where prices might go — it helps you understand why.', avatar: OliviaAvatar },
-  { name: 'Michael P.', role: 'Operations Manager', quote: 'The visual forecasts make complex energy-market data much easier to understand. Our team can quickly see what’s happening and act before prices move.', avatar: MichaelAvatar },
+  { name: 'James R.', role: 'Energy Trader', text: 'The forecasts give us a much clearer picture of where prices are heading. We can spot potential peaks earlier and make decisions with more confidence.', avatar: JamesAvatar },
+  { name: 'Sarah M.', role: 'Procurement Manager', text: 'Instead of relying on historical averages, we can now see what the market is likely to do next. It’s made our energy purchasing decisions more informed.', avatar: SarahAvatar },
+  { name: 'Daniel K.', role: 'Energy Analyst', text: 'I used to spend hours combining market data from different sources. Having forecasts, trends and price drivers in one place has significantly streamlined my analysis.', avatar: DanielAvatar },
+  { name: 'Emma T.', role: 'Renewable Energy Developer', text: 'Understanding when electricity prices are likely to rise or fall helps us plan around generation and maximise the value of our renewable assets.', avatar: EmmaAvatar },
+  { name: 'Olivia S.', role: 'Energy Consultant', text: 'What I like most is the combination of prediction and context. It doesn’t just show you where prices might go — it helps you understand why.', avatar: OliviaAvatar },
+  { name: 'Michael P.', role: 'Operations Manager', text: 'The visual forecasts make complex energy-market data much easier to understand. Our team can quickly see what’s happening and act before prices move.', avatar: MichaelAvatar },
 ]
 
 export default function Testimonials() {
@@ -45,7 +45,7 @@ export default function Testimonials() {
                   <span className="testimonial-card__role">{item.role}</span>
                 </div>
               </div>
-              <p className="testimonial-card__quote">«{item.quote}»</p>
+              <p className="testimonial-card__text">{item.text}</p>
             </div>
           ))}
         </div>

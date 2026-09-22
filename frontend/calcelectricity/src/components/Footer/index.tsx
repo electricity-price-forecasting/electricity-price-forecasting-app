@@ -61,9 +61,9 @@ export default function Footer() {
 
       <div className="container footer__bottom">
         <div className="footer__social">
-          <a href="https://github.com/electricity-price-forecasting/electricity-price-forecasting-app.git" aria-label="GitHub"><IconGithub /></a>
-          <a href="https://www.youtube.com/watch?v=CF5I-6jdejQ" aria-label="YouTube"><IconYoutube /></a>
-          <a href="https://www.linkedin.com/in/maksym-tsyrulnyk-994892201/overlay/1789919249703/single-media-viewer/?profileId=ACoAADOQ3AABucged1pSwthvlEBm55RGJ7maQF0" aria-label="LinkedIn"><IconLinkedin /></a>
+          <a href="#" aria-label="GitHub"><IconGithub /></a>
+          <a href="#" aria-label="YouTube"><IconYoutube /></a>
+          <a href="#" aria-label="LinkedIn"><IconLinkedin /></a>
         </div>
       </div>
     </footer>

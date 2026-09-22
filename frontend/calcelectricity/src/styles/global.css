@@ -1,11 +1,11 @@
 :root {
   /* Кольори */
-  --color-bg: #ffffff;
+  --color-bg: #faf9f5;
   --color-bg-soft: #f7f7f5;
   --color-ink: #14151a;
   --color-ink-soft: #5b5d66;
   --color-ink-faint: #9698a1; /*upd*/
-  --color-border: #e7e7e3;
+  --color-border: #e6e6e6;
 
   --color-primary: #6c3ce0;       /* фірмовий фіолетовий логотипу */
   --color-primary-dark: #4c28a3;

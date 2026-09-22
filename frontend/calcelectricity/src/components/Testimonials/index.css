@@ -20,7 +20,7 @@
 }
 
 .testimonial-card {
-  background: #e6e6e6;
+  background: #faf9f5;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-m);
   padding: 24px;
@@ -36,7 +36,7 @@
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: #eeece6; 
+  background: #faf9f5; 
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@
   color: var(--color-ink-soft);
 }
 
-.testimonial-card__quote {
+.testimonial-card__text {
   margin-top: 16px;
   font-size: 14px;
   color: var(--color-ink-soft);
