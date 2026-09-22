@@ -1,0 +1,18 @@
+{
+  "current_price": 71.59,
+  "today_average": {
+    "value": 124.98,
+    "trend": "down",
+    "change_text": "-29.1%"
+  },
+  "today_peak": {
+    "value": 289.78,
+    "trend": "down",
+    "change_text": "-21.8%"
+  },
+  "today_low": {
+    "value": 20.56,
+    "trend": "down",
+    "change_text": "-49.0%"
+  }
+}

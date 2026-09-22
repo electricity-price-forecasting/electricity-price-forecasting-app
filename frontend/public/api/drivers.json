@@ -1,0 +1,32 @@
+{
+  "summary": "Price drivers calculated based on daily averages",
+  "drivers": [
+    {
+      "name": "Wind Generation",
+      "description": "Wind output impact",
+      "previous_value": 1029.9,
+      "current_value": 2228,
+      "unit": "MW",
+      "change_text": "+116.3%",
+      "trend": "down"
+    },
+    {
+      "name": "Solar Generation",
+      "description": "Solar output impact",
+      "previous_value": 3622.3,
+      "current_value": 3171.6,
+      "unit": "MW",
+      "change_text": "-12.4%",
+      "trend": "up"
+    },
+    {
+      "name": "Electricity Demand",
+      "description": "Grid load impact",
+      "previous_value": 18487.2,
+      "current_value": 19884.5,
+      "unit": "MW",
+      "change_text": "+7.6%",
+      "trend": "up"
+    }
+  ]
+}
