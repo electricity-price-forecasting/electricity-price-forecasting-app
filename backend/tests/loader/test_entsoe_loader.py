@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 from entsoe.exceptions import NoMatchingDataError
 
-from loader.entsoe_loader import EntsoeLoader
+from app.loader.entsoe_loader import EntsoeLoader
 
 
 def test_prepare_dataframe_converts_series_to_dataframe():
