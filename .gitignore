@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# Generated data
+app/data/
+
+# Cache files
+*.parquet
+*.cache
+
+# Trained model files
+*.pkl
+
 # Distribution / packaging
 .idea
 .Python
@@ -240,3 +250,10 @@ raw_reports
 reports
 cypress/screenshots
 cypress/videos
+
+# Generated data
+*.csv
+
+# Cache
+cache/
+data/cache/

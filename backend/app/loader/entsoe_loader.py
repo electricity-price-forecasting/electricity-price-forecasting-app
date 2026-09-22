@@ -1,21 +1,29 @@
-import os
 from entsoe import EntsoePandasClient
 from entsoe.exceptions import NoMatchingDataError
 
-from config.settings import settings
+from app.config.settings import settings
 import pandas as pd
-
-from utils.validation import validate_dates
 
 
 class EntsoeLoader:
 
     def __init__(self, country=settings.country) -> None:
-        api_key = os.getenv("ENTSOE_API_KEY")
-        if not api_key:
-            raise ValueError("Environment variable ENTSOE_API_KEY is not set.")
-        self.client = EntsoePandasClient(api_key=api_key)
+        self.client = EntsoePandasClient(api_key=settings.entsoe_api_key)
         self.country = country
+
+    def build_dataset(self, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+        """
+        Fetches prices, load, and renewable generation data and combines them.
+        Keeps only the timestamps that exist in all datasets.
+        """
+        prices = self.get_prices(start, end)
+        load = self.get_load(start, end)
+        renewable = self.get_wind_solar(start, end)
+
+        # Concatenate column-wise and use an inner join to drop missing timestamps
+        dataset = pd.concat([prices, load, renewable], axis=1, join="inner")
+
+        return dataset
 
     @staticmethod
     def _prepare_dataframe(df: pd.DataFrame | pd.Series) -> pd.DataFrame:
@@ -30,7 +38,6 @@ class EntsoeLoader:
             prices = self.client.query_day_ahead_prices(
                 country_code=self.country, start=start, end=end
             ).to_frame(name="price")
-            prices = prices.resample("15min").interpolate(method="time").round(2)
             return self._prepare_dataframe(prices)
         except NoMatchingDataError:
             return pd.DataFrame(columns=["price"])
@@ -62,14 +69,3 @@ class EntsoeLoader:
             return renewable
         except NoMatchingDataError:
             return pd.DataFrame(columns=["wind", "solar"])
-
-    def build_dataset(self, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
-        validate_dates(start, end)
-
-        prices = self.get_prices(start, end)
-        load = self.get_load(start, end)
-        renewable = self.get_wind_solar(start, end)
-
-        df = prices.join(load, how="inner").join(renewable, how="inner").sort_index()
-
-        return df
