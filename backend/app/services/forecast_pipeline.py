@@ -5,7 +5,6 @@ import pandas as pd
 
 from app.config.settings import settings
 from app.forecasting.forecast_service import ForecastService
-from app.loader.entsoe_loader import EntsoeLoader
 from app.models.load_model import LoadModel
 from app.models.wind_model import WindModel
 from app.models.solar_model import SolarModel
