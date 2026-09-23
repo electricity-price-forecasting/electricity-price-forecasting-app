@@ -1,4 +1,5 @@
 import logging
+from threading import Lock
 from pathlib import Path
 
 import pandas as pd
@@ -19,8 +20,15 @@ logger = logging.getLogger(__name__)
 
 
 class ForecastPipeline:
+    _lock = Lock()
 
     def run(
+            self, periods: int = settings.periods, retrain: bool = False
+    ) -> pd.DataFrame:
+        with self._lock:
+            return self._run(periods, retrain)
+
+    def _run(
         self, periods: int = settings.periods, retrain: bool = False
     ) -> pd.DataFrame:
         builder = HistoricalDatasetBuilder()
