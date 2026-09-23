@@ -41,7 +41,7 @@ def test_run_forecast_success(mock_run, mock_forecast_df):
     data = response.json()
 
     assert data["period"] == "24h"
-    assert data["timezone"] == "UTC"
+    assert data["timezone"] == "Europe/Warsaw"
 
     assert len(data["forecast"]) == 2
 

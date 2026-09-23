@@ -34,7 +34,7 @@ class ForecastPipeline:
         if processed.empty:
             raise ValueError("Processed dataset is empty.")
 
-        if retrain or not self.models_need_retraining():
+        if retrain or not self.models_exist():
             logger.info("Training models...")
             ModelTrainer.train_all()
         else:
@@ -87,7 +87,7 @@ class ForecastPipeline:
         return result
 
     @staticmethod
-    def models_need_retraining() -> bool:
+    def models_exist() -> bool:
         return all(
             Path(path).exists()
             for path in (
