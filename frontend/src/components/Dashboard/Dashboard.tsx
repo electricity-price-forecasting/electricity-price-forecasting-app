@@ -18,7 +18,6 @@ import { Bars } from "react-loader-spinner";
 import { ChartPeriods } from "../../types/enums";
 import type { ForecastPeriod } from "../../services/fetchAPI";
 import { Skeleton } from "@mui/material";
-// import { Sidebar } from "./Sidebar";
 
 const apiPeriods: Record<ChartPeriods, ForecastPeriod> = {
   [ChartPeriods.day]: "24h",
@@ -123,8 +122,6 @@ export const Dashboard = () => {
         </div>
       )}
       <div className="app__body">
-        {/*<Sidebar />*/}
-
         <main className="app__body__content">
           {dashboardLoading ? (
             <div className="app__body__content__loading-box">
