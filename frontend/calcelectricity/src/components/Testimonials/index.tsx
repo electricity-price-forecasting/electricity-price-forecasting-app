@@ -1,3 +1,4 @@
+import SectionHeader from '../SectionHeader'
 import JamesAvatar from '../../assets/JamesAvatar.svg'
 import SarahAvatar from '../../assets/SarahAvatar.svg'
 import DanielAvatar from '../../assets/DanielAvatar.svg'
@@ -26,11 +27,18 @@ export default function Testimonials() {
   return (
     <section className="testimonials section section--soft" id="trust">
       <div className="container">
-       <div className="testimonials__header">
+       {/* <div className="testimonials__header">
           <h2 className="testimonials__title">
             Trusted by teams
           </h2>
-        </div>
+        </div> */}
+
+        <SectionHeader
+          title="Trusted by teams"
+          text="The experience is structured around the questions electricity-market users ask under time pressure"
+          // ctaLabel="Try workflow >"
+          ctaHref="#complex-market-data"
+        />
 
         <div className="testimonials__grid">
           {TESTIMONIALS.map((item) => (

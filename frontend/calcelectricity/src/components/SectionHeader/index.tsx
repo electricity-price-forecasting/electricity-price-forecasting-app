@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import './index.css'
 
 interface SectionHeaderProps {
-  title: string
+  title: ReactNode
   text?: string
   ctaLabel?: string
   ctaHref?: string

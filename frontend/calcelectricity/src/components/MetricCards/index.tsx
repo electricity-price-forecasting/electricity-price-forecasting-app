@@ -24,7 +24,7 @@ export default function MetricCards() {
         <SectionHeader
           title="Complex market data"
           text="The experience is structured around the questions electricity-market users ask under time pressure"
-          ctaLabel="Try workflow >"
+          // ctaLabel="Try workflow >"
           ctaHref="#complex-market-data"
         />
 

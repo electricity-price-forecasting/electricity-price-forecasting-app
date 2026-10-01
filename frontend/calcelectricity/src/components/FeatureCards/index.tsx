@@ -1,4 +1,4 @@
-import SectionHeader from '../SectionHeader'
+import SectionHeader from '../SectionHeader/index'
 import windmillIcon from '../../icons/windmill.svg'
 import peopleIcon from '../../icons/people.svg'
 import fireIcon from '../../icons/fire.svg'
@@ -12,7 +12,7 @@ export default function FeatureCards() {
         <SectionHeader
           title={'Everything required to move\nfrom forecast to action'}
           text="GridScope brings revisions, drivers, uncertainty and market impact into one evidence-backed workflow"
-          ctaLabel="Get started >"
+          // ctaLabel="Get started >"
           ctaHref="#insights"
         />
 
@@ -31,32 +31,33 @@ export default function FeatureCards() {
               </span>
             </div>
             <h3 className="feature-card__title">Connected data sources</h3>
-            <p className="feature-card__text">
+            {/* <p className="feature-card__text">
               Over 30 exchanges and network operators in a single stream
-            </p>
+            </p> */}
           </div>
 
           {/* Role-based workspaces */}
           <div className="feature-card">
             <div className="feature-card__visual feature-card__visual--workspace">
               <div className="mini-chart">
-                <svg viewBox="0 0 220 70" preserveAspectRatio="none" aria-hidden="true">
+                {/* <svg viewBox="0 0 220 70" preserveAspectRatio="none" aria-hidden="true">
                   <polyline
                     points="0,40 30,32 60,20 90,26 120,34 150,40 180,36 220,38"
                     fill="none"
                     stroke="#7c93ff"
                     strokeWidth="2"
                   />
-                </svg>
-                <span className="role-tag role-tag--analyst">Analyst</span>
+                </svg> */}
+                <img src="./src/assets/electricity-flow-shared-analysis 1.png" alt="" />
+                {/* <span className="role-tag role-tag--analyst">Analyst</span>
                 <span className="role-tag role-tag--operator">Operator</span>
-                <span className="role-tag role-tag--trader">Trader</span>
+                <span className="role-tag role-tag--trader">Trader</span> */}
               </div>
             </div>
             <h3 className="feature-card__title">Role-based workspaces</h3>
-            <p className="feature-card__text">
+            {/* <p className="feature-card__text">
               Tailored views for traders, analysts and operations teams
-            </p>
+            </p> */}
           </div>
 
           {/* Live forecast revisions */}
@@ -85,9 +86,9 @@ export default function FeatureCards() {
               </div>
             </div>
             <h3 className="feature-card__title">Live forecast revisions</h3>
-            <p className="feature-card__text">
+            {/* <p className="feature-card__text">
               See every update the moment new market data lands
-            </p>
+            </p> */}
           </div>
         </div>
 
