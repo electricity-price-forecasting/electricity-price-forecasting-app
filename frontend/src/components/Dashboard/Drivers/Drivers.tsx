@@ -6,7 +6,6 @@ import peopleIcon from "../../../assets/people-background-icon.svg";
 import gasIcon from "../../../assets/gas-background.svg";
 import type { DriversData } from "../../../types/types";
 import classNames from "classnames";
-// import blueArrowRightIcon from "../../../assets/blue-arrow-right-icon.svg";
 
 type Props = {
   drivers: DriversData;
@@ -33,13 +32,6 @@ export const Drivers: React.FC<Props> = ({ drivers }) => {
           <h4 className="drivers__textBox__titleBox__title">Price Drivers</h4>
           <p className="drivers__textBox__titleBox__text">{drivers?.summary}</p>
         </div>
-
-        {/*
-        <button className="drivers__textBox__button">
-          View detailed drivers
-          <img src={blueArrowRightIcon} alt="" />
-        </button>
-        */}
       </div>
 
       {drivers?.drivers.map((element, index) => (
@@ -78,8 +70,8 @@ export const Drivers: React.FC<Props> = ({ drivers }) => {
 
             <p
               className={classNames("drivers__infoPanel__infoBox__changeText", {
-                red: element.trend === "down",
-                green: element.trend === "up",
+                red: element.trend === "up",
+                green: element.trend === "down",
               })}
             >
               {element.change_text}
@@ -110,7 +102,7 @@ export const Drivers: React.FC<Props> = ({ drivers }) => {
             <p className="drivers__infoPanel__infoBox__unitsBox__text">+0%</p>
           </div>
 
-          <p className="drivers__infoPanel__infoBox__changeText green">+0€</p>
+          <p className="drivers__infoPanel__infoBox__changeText">+0€</p>
         </div>
       </div>
     </div>
