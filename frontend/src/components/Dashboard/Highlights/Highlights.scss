@@ -114,16 +114,6 @@
 
       gap: 4px;
 
-      &__trendBox {
-        display: flex;
-        gap: 2px;
-
-        &__changeText {
-          font-size: 14px;
-          font-weight: 500;
-        }
-      }
-
       &__text {
         font-size: 12px;
         font-weight: 400;
@@ -131,12 +121,20 @@
       }
     }
   }
-}
+  &__priceChange {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $subtitleColor;
 
-.red {
-  color: $rateDownTextColor;
-}
+    &--up {
+      color: $rateDownTextColor;
+    }
 
-.green {
-  color: $rateUpTextColor;
+    &--down {
+      color: $rateUpTextColor;
+    }
+  }
 }

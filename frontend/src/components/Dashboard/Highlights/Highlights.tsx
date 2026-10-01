@@ -1,10 +1,42 @@
 import "./Highlights.scss";
-import rateUpIcon from "../../../assets/rate-up-icon.svg";
-import rateDownIcon from "../../../assets/rate-down-icon.svg";
 import type { HighlightsData } from "../../../types/types";
 
 type Props = {
   highlights: HighlightsData;
+};
+
+const trendIndicators = {
+  up: { path: "M8 13V3M4 7L8 3L12 7", label: "Price increased" },
+  down: { path: "M8 3V13M4 9L8 13L12 9", label: "Price decreased" },
+  neutral: { path: "M3 8H13", label: "Price unchanged" },
+};
+
+const PriceChange = ({
+  trend,
+  change_text,
+}: HighlightsData["today_average"]) => {
+  const direction = trend === "up" || trend === "down" ? trend : "neutral";
+  const indicator = trendIndicators[direction];
+
+  return (
+    <div className={`highlights__priceChange highlights__priceChange--${direction}`}>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        role="img"
+        aria-label={indicator.label}
+      >
+        <path d={indicator.path} />
+      </svg>
+      <p>{change_text}</p>
+    </div>
+  );
 };
 
 export const Highlights: React.FC<Props> = ({ highlights }) => {
@@ -44,29 +76,7 @@ export const Highlights: React.FC<Props> = ({ highlights }) => {
         </div>
 
         <div className="highlights__todaysPanelBox__infoContainer">
-          {highlights?.today_average.trend === "up" ? (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateUpIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText green">
-                {highlights?.today_average.change_text}
-              </p>
-            </div>
-          ) : (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateDownIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText red">
-                {highlights?.today_average.change_text}
-              </p>
-            </div>
-          )}
+          <PriceChange {...highlights.today_average} />
 
           <p className="highlights__todaysPanelBox__infoContainer__text">
             vs yesterday
@@ -91,29 +101,7 @@ export const Highlights: React.FC<Props> = ({ highlights }) => {
         </div>
 
         <div className="highlights__todaysPanelBox__infoContainer">
-          {highlights?.today_peak.trend === "up" ? (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateUpIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText green">
-                {highlights?.today_peak.change_text}
-              </p>
-            </div>
-          ) : (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateDownIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText red">
-                {highlights?.today_peak.change_text}
-              </p>
-            </div>
-          )}
+          <PriceChange {...highlights.today_peak} />
           <p className="highlights__todaysPanelBox__infoContainer__text">
             vs yesterday
           </p>
@@ -137,29 +125,7 @@ export const Highlights: React.FC<Props> = ({ highlights }) => {
         </div>
 
         <div className="highlights__todaysPanelBox__infoContainer">
-          {highlights?.today_low.trend === "up" ? (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateUpIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText green">
-                {highlights?.today_low.change_text}
-              </p>
-            </div>
-          ) : (
-            <div className="highlights__todaysPanelBox__infoContainer__trendBox">
-              <img
-                src={rateDownIcon}
-                alt=""
-                className="highlights__todaysPanelBox__infoContainer__trendBox__infoIcon"
-              />
-              <p className="highlights__todaysPanelBox__infoContainer__trendBox__changeText red">
-                {highlights?.today_low.change_text}
-              </p>
-            </div>
-          )}
+          <PriceChange {...highlights.today_low} />
           <p className="highlights__todaysPanelBox__infoContainer__text">
             vs yesterday
           </p>
